@@ -137,3 +137,4 @@ void loop() {
     rfid.PICC_HaltA();
     rfid.PCD_StopCrypto1();
 }
+ 
