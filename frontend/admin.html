@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inventory MS - Admin Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    /* Hide scrollbar arrows on number inputs */
+    input[type='number']::-webkit-inner-spin-button,
+    input[type='number']::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 font-sans antialiased">
+
+  <!-- FULL-SCREEN LOGIN / LOGOUT PAGE -->
+  <div id="login-screen" class="hidden fixed inset-0 bg-slate-900 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full">
+      <div class="text-center mb-6">
+        <div class="inline-flex p-3 bg-blue-100 text-blue-600 rounded-2xl mb-3">
+          <i class="fa-solid fa-store text-3xl"></i>
+        </div>
+        <h2 class="text-2xl font-bold text-gray-800">Smart Furniture Store</h2>
+        <p class="text-xs text-gray-500 mt-1">Admin & Inventory Management Portal</p>
+      </div>
+
+      <form onsubmit="handleLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Shop Name</label>
+          <input type="text" value="Royal Teak Furniture Co." required class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500 bg-gray-50 font-medium text-gray-700" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Username</label>
+          <input type="text" placeholder="admin" required class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Password</label>
+          <input type="password" value="••••••••" required class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500" />
+        </div>
+
+        <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl text-sm transition shadow-md mt-2">
+          Login to Dashboard
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MAIN DASHBOARD APP -->
+  <div id="app-screen" class="flex h-screen overflow-hidden">
+
+    <!-- Sidebar Taskbar -->
+    <aside class="w-60 bg-white text-gray-600 flex flex-col justify-between p-4 shrink-0 border-r border-gray-200">
+      <div>
+        <div class="flex items-center space-x-3 px-2 py-3 mb-6 border-b border-gray-100">
+          <i class="fa-solid fa-boxes-stacked text-2xl text-blue-600"></i>
+          <span class="text-lg font-bold text-gray-800 tracking-wide">Inventory MS</span>
+        </div>
+
+        <nav class="space-y-1">
+          <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-gray-900 font-bold bg-gray-100 transition">
+            <i class="fa-solid fa-border-all w-5 text-center text-gray-500"></i>
+            <span>Dashboard</span>
+          </button>
+
+          <button onclick="switchTab('listings')" id="nav-listings" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-50 transition">
+            <i class="fa-solid fa-list-ul w-5 text-center text-gray-400"></i>
+            <span>Listings</span>
+          </button>
+
+          <button onclick="switchTab('inventory')" id="nav-inventory" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-50 transition">
+            <i class="fa-solid fa-clipboard-list w-5 text-center text-gray-400"></i>
+            <span>Inventory</span>
+          </button>
+
+          <button onclick="switchTab('orders')" id="nav-orders" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-50 transition">
+            <i class="fa-solid fa-receipt w-5 text-center text-gray-400"></i>
+            <span>Orders</span>
+          </button>
+
+          <button onclick="switchTab('reports')" id="nav-reports" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-50 transition">
+            <i class="fa-solid fa-chart-column w-5 text-center text-amber-500"></i>
+            <span class="font-bold text-gray-800">Reports</span>
+          </button>
+
+          <button onclick="switchTab('notifications')" id="nav-notifications" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-50 transition">
+            <i class="fa-solid fa-bell w-5 text-center text-gray-400"></i>
+            <span>Notifications</span>
+          </button>
+        </nav>
+      </div>
+
+      <div>
+        <button onclick="logout()" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-gray-500 hover:bg-red-50 hover:text-red-600 transition">
+          <i class="fa-solid fa-right-from-bracket w-5 text-center"></i>
+          <span>Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 overflow-y-auto p-8">
+      
+      <!-- VIEW 1: DASHBOARD -->
+      <div id="view-dashboard">
+        <div class="flex justify-between items-center mb-8">
+          <div>
+            <h1 class="text-3xl font-bold text-gray-800">Dashboard</h1>
+            <p class="text-sm text-gray-500 mt-1">Royal Teak Furniture Co. & RFID Inventory Control</p>
+          </div>
+          <div class="flex items-center space-x-3 bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-200">
+            <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="text-xs font-semibold text-gray-700">RFID Scanner Ready</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div class="bg-blue-500 rounded-2xl p-6 text-white shadow-lg shadow-blue-500/20 text-center">
+            <h3 class="text-lg font-medium opacity-90">Total Products</h3>
+            <p class="text-4xl font-extrabold mt-2" id="stat-products">3</p>
+          </div>
+          <div class="bg-emerald-500 rounded-2xl p-6 text-white shadow-lg shadow-emerald-500/20 text-center">
+            <h3 class="text-lg font-medium opacity-90">Total Stock</h3>
+            <p class="text-4xl font-extrabold mt-2" id="stat-stock">37</p>
+          </div>
+          <div class="bg-amber-500 rounded-2xl p-6 text-white shadow-lg shadow-amber-500/20 text-center">
+            <h3 class="text-lg font-medium opacity-90">Orders Today</h3>
+            <p class="text-4xl font-extrabold mt-2">1</p>
+          </div>
+          <div class="bg-purple-600 rounded-2xl p-6 text-white shadow-lg shadow-purple-600/20 text-center">
+            <h3 class="text-lg font-medium opacity-90">Daily Revenue</h3>
+            <p class="text-4xl font-extrabold mt-2">₹14,200</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <h2 class="text-lg font-bold text-gray-800 border-b pb-3 border-gray-100">Out of Stock Products</h2>
+            <div class="py-4">
+              <p class="text-base font-semibold text-gray-800">Minimalist Velvet Sofa <span class="text-sm font-normal text-gray-400">(Living Room)</span></p>
+            </div>
+          </div>
+          <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <h2 class="text-lg font-bold text-gray-800 border-b pb-3 border-gray-100">Highest Sale Product</h2>
+            <div class="py-4 space-y-1">
+              <p class="text-sm text-gray-600"><span class="font-bold text-gray-800">Name:</span> Ergonomic Office Chair</p>
+              <p class="text-sm text-gray-600"><span class="font-bold text-gray-800">Category:</span> Seating (Home Office)</p>
+              <p class="text-sm text-gray-600"><span class="font-bold text-gray-800">Total Units Sold:</span> 14</p>
+            </div>
+          </div>
+          <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <h2 class="text-lg font-bold text-gray-800 border-b pb-3 border-gray-100">Low Stock Products</h2>
+            <div class="py-3 space-y-1.5 text-sm text-gray-600">
+              <p><span class="font-bold text-gray-800">Teak Executive Desk</span> - 2 left <span class="text-gray-400">(Wooden)</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 2: LISTINGS -->
+      <div id="view-listings" class="hidden">
+        <div class="flex justify-between items-center mb-8">
+          <div>
+            <h1 class="text-3xl font-bold text-gray-800">Listings</h1>
+            <p class="text-sm text-gray-500 mt-1">Manage public furniture store listings and mapped categories</p>
+          </div>
+          <button onclick="openAddModal()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold shadow-md transition flex items-center space-x-2">
+            <i class="fa-solid fa-plus"></i>
+            <span>Add New Product</span>
+          </button>
+        </div>
+
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="text-xs font-semibold text-gray-400 uppercase border-b border-gray-100">
+                  <th class="py-3 px-3">Product</th>
+                  <th class="py-3 px-3">Mapped Categories</th>
+                  <th class="py-3 px-3">Price (₹)</th>
+                  <th class="py-3 px-3">Quantity</th>
+                  <th class="py-3 px-3">RFID Tag</th>
+                  <th class="py-3 px-3 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="products-table-body" class="text-sm divide-y divide-gray-100"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 3: INVENTORY -->
+      <div id="view-inventory" class="hidden">
+        <div class="mb-8">
+          <h1 class="text-3xl font-bold text-gray-800">Warehouse Inventory</h1>
+          <p class="text-sm text-gray-500 mt-1">Real-time stock quantities and physical RFID tag tracking</p>
+        </div>
+
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="text-xs font-semibold text-gray-400 uppercase border-b border-gray-100">
+                  <th class="py-3 px-3">SKU</th>
+                  <th class="py-3 px-3">Item Name</th>
+                  <th class="py-3 px-3">Stock Units</th>
+                  <th class="py-3 px-3">RFID UID</th>
+                  <th class="py-3 px-3 text-right">Status</th>
+                </tr>
+              </thead>
+              <tbody id="inventory-table-body" class="text-sm divide-y divide-gray-100"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 4: ORDERS -->
+      <div id="view-orders" class="hidden">
+        <div class="mb-8">
+          <h1 class="text-3xl font-bold text-gray-800">Orders</h1>
+          <p class="text-sm text-gray-500 mt-1">Manage online e-commerce and offline store sales</p>
+        </div>
+
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="text-xs font-semibold text-gray-400 uppercase border-b border-gray-100">
+                  <th class="py-3 px-3">Order ID</th>
+                  <th class="py-3 px-3">Channel</th>
+                  <th class="py-3 px-3">Customer</th>
+                  <th class="py-3 px-3">Item Purchased</th>
+                  <th class="py-3 px-3">Amount</th>
+                  <th class="py-3 px-3">Status</th>
+                  <th class="py-3 px-3 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="orders-table-body" class="text-sm divide-y divide-gray-100"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 5: REPORTS -->
+      <div id="view-reports" class="hidden">
+        <div class="mb-8">
+          <h1 class="text-3xl font-bold text-gray-800">Sales Reports</h1>
+          <p class="text-sm text-gray-500 mt-1">Store revenue analytics and sales performance</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <div class="flex items-center justify-between pb-3 border-b border-gray-100">
+              <h3 class="font-bold text-gray-800">Daily Sales Report</h3>
+              <i class="fa-solid fa-calendar-day text-blue-500"></i>
+            </div>
+            <p class="text-3xl font-extrabold text-gray-800 mt-4">₹14,200</p>
+            <p class="text-xs text-emerald-600 mt-1"><i class="fa-solid fa-arrow-up mr-1"></i>+12% vs yesterday</p>
+          </div>
+
+          <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <div class="flex items-center justify-between pb-3 border-b border-gray-100">
+              <h3 class="font-bold text-gray-800">Monthly Sales Report</h3>
+              <i class="fa-solid fa-calendar-week text-emerald-500"></i>
+            </div>
+            <p class="text-3xl font-extrabold text-gray-800 mt-4">₹2,84,500</p>
+            <p class="text-xs text-emerald-600 mt-1"><i class="fa-solid fa-arrow-up mr-1"></i>+8% vs last month</p>
+          </div>
+
+          <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <div class="flex items-center justify-between pb-3 border-b border-gray-100">
+              <h3 class="font-bold text-gray-800">Annual Sales Report</h3>
+              <i class="fa-solid fa-calendar-days text-purple-500"></i>
+            </div>
+            <p class="text-3xl font-extrabold text-gray-800 mt-4">₹32,40,000</p>
+            <p class="text-xs text-emerald-600 mt-1"><i class="fa-solid fa-arrow-up mr-1"></i>+24% vs last year</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 6: NOTIFICATIONS -->
+      <div id="view-notifications" class="hidden">
+        <div class="mb-8">
+          <h1 class="text-3xl font-bold text-gray-800">Notifications</h1>
+          <p class="text-sm text-gray-500 mt-1">Real-time alerts and activity logs</p>
+        </div>
+
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 space-y-4">
+          <div class="flex items-center space-x-4 p-4 rounded-xl bg-blue-50 border-l-4 border-blue-500">
+            <i class="fa-solid fa-circle-check text-blue-600 text-xl"></i>
+            <div>
+              <p class="font-bold text-gray-800 text-sm">1 order placed</p>
+              <p class="text-xs text-gray-500">Order #ORD-104 placed by Rahul Sharma (₹14,200)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- ADD PRODUCT MODAL -->
+  <div id="add-product-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full p-6 border border-gray-100 my-8 overflow-y-auto max-h-[90vh]">
+      
+      <div class="flex justify-between items-center pb-4 border-b border-gray-100">
+        <h3 class="text-lg font-bold text-gray-800">Add New Furniture Product</h3>
+        <button onclick="closeAddModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+      </div>
+
+      <form id="add-product-form" onsubmit="handleAddProduct(event)" class="mt-4 space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Product Name</label>
+          <input type="text" id="p-name" required placeholder="e.g. Modern Teak Armchair" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">SKU</label>
+            <input type="text" id="p-sku" required placeholder="FURN-ARM-001" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Functional Category</label>
+            <select id="p-cat-functional" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+              <option value="Seating">Seating</option>
+              <option value="Tables">Tables</option>
+              <option value="Beds">Beds</option>
+              <option value="Storage">Storage</option>
+              <option value="Desks">Desks</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Room Category</label>
+            <select id="p-cat-room" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+              <option value="Living Room">Living Room</option>
+              <option value="Bedroom">Bedroom</option>
+              <option value="Dining Room">Dining Room</option>
+              <option value="Home Office">Home Office</option>
+              <option value="Outdoor">Outdoor</option>
+              <option value="Kids Room">Kids Room</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Material Category</label>
+            <select id="p-cat-material" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+              <option value="Wooden">Wooden</option>
+              <option value="Metal">Metal</option>
+              <option value="Upholstered">Upholstered</option>
+              <option value="Plastic">Plastic</option>
+              <option value="Wicker & Rattan">Wicker & Rattan</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Price (₹)</label>
+            <input type="number" id="p-price" step="1" min="0" required placeholder="14999" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Quantity</label>
+            <input type="number" id="p-qty" min="0" required placeholder="10" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Description</label>
+          <textarea id="p-desc" rows="2" placeholder="Enter product details and specs..." class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Product Photo</label>
+          <input type="file" id="p-image" accept="image/*" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+        </div>
+
+        <div class="flex justify-end space-x-3 pt-4 border-t border-gray-100">
+          <button type="button" onclick="closeAddModal()" class="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg text-xs font-semibold hover:bg-gray-200">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700">Save Product</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <script>
+    let products = [
+      { id: "1", name: "Modern Oak Dining Table", sku: "FURN-TBL-001", functional: "Tables", room: "Dining Room", material: "Wooden", price: 28500, quantity: 12, rfid: "E28068900000", image: "https://images.unsplash.com/photo-1530018607912-eff2daa1bac4?w=100&auto=format&fit=crop" },
+      { id: "2", name: "Ergonomic Office Chair", sku: "FURN-CHR-004", functional: "Seating", room: "Home Office", material: "Upholstered", price: 14200, quantity: 25, rfid: "E28068900001", image: "https://images.unsplash.com/photo-1580481072645-022f9a6d1270?w=100&auto=format&fit=crop" },
+      { id: "3", name: "Minimalist Velvet Sofa", sku: "FURN-SOF-002", functional: "Seating", room: "Living Room", material: "Upholstered", price: 41800, quantity: 0, rfid: "Unassigned", image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=100&auto=format&fit=crop" }
+    ];
+
+    let orders = [
+      { id: "ORD-104", channel: "Online Store", customer: "Rahul Sharma", productId: "2", productName: "Ergonomic Office Chair", amount: 14200, status: "Pending Dispatch" },
+      { id: "ORD-103", channel: "In-Store (Offline)", customer: "Walk-in Customer", productId: "1", productName: "Modern Oak Dining Table", amount: 28500, status: "Dispatched" }
+    ];
+
+    function switchTab(tab) {
+      const views = {
+        dashboard: document.getElementById('view-dashboard'),
+        listings: document.getElementById('view-listings'),
+        inventory: document.getElementById('view-inventory'),
+        orders: document.getElementById('view-orders'),
+        reports: document.getElementById('view-reports'),
+        notifications: document.getElementById('view-notifications')
+      };
+      const btns = {
+        dashboard: document.getElementById('nav-dashboard'),
+        listings: document.getElementById('nav-listings'),
+        inventory: document.getElementById('nav-inventory'),
+        orders: document.getElementById('nav-orders'),
+        reports: document.getElementById('nav-reports'),
+        notifications: document.getElementById('nav-notifications')
+      };
+
+      Object.keys(views).forEach(k => views[k].classList.add('hidden'));
+      Object.keys(btns).forEach(k => btns[k].className = "w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-50 transition");
+
+      views[tab].classList.remove('hidden');
+      btns[tab].className = "w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-gray-900 font-bold bg-gray-100 transition";
+
+      if (tab === 'listings') renderProductsTable();
+      if (tab === 'inventory') renderInventoryTable();
+      if (tab === 'orders') renderOrdersTable();
+    }
+
+    function renderProductsTable() {
+      const tbody = document.getElementById('products-table-body');
+      tbody.innerHTML = products.map(item => `
+        <tr class="hover:bg-gray-50/50">
+          <td class="py-3 px-3 flex items-center space-x-3">
+            <img src="${item.image}" class="w-10 h-10 object-cover rounded-lg border" />
+            <div>
+              <p class="font-semibold text-gray-800">${item.name}</p>
+              <p class="text-xs text-gray-400">${item.sku}</p>
+            </div>
+          </td>
+          <td class="py-3 px-3">
+            <div class="flex flex-wrap gap-1">
+              <span class="px-2 py-0.5 text-[10px] bg-blue-100 text-blue-700 rounded font-medium">${item.functional}</span>
+              <span class="px-2 py-0.5 text-[10px] bg-emerald-100 text-emerald-700 rounded font-medium">${item.room}</span>
+              <span class="px-2 py-0.5 text-[10px] bg-purple-100 text-purple-700 rounded font-medium">${item.material}</span>
+            </div>
+          </td>
+          <td class="py-3 px-3">
+            <div class="inline-flex items-center border border-gray-200 rounded-lg bg-gray-50 px-2 py-1">
+              <span class="text-xs font-semibold text-gray-500 mr-1">₹</span>
+              <input type="number" min="0" value="${item.price}" onchange="setPrice('${item.id}', this.value)" class="w-20 bg-transparent text-xs font-bold text-gray-800 focus:outline-none" />
+            </div>
+          </td>
+          <td class="py-3 px-3">
+            <div class="inline-flex items-center space-x-1 border border-gray-200 rounded-lg bg-gray-50 p-1">
+              <button onclick="changeQuantity('${item.id}', -1)" class="w-6 h-6 rounded bg-white hover:bg-gray-200 text-gray-600 font-bold text-xs flex items-center justify-center border shadow-sm transition">-</button>
+              <input type="number" min="0" value="${item.quantity}" onchange="setQuantity('${item.id}', this.value)" class="w-12 text-center bg-transparent text-xs font-bold text-gray-800 focus:outline-none" />
+              <button onclick="changeQuantity('${item.id}', 1)" class="w-6 h-6 rounded bg-white hover:bg-gray-200 text-gray-600 font-bold text-xs flex items-center justify-center border shadow-sm transition">+</button>
+            </div>
+          </td>
+          <td class="py-3 px-3 font-mono text-xs text-blue-600">${item.rfid}</td>
+          <td class="py-3 px-3 text-right">
+            <button onclick="deleteProduct('${item.id}')" class="text-red-500 hover:text-red-700 font-semibold text-xs px-2 py-1 rounded hover:bg-red-50 transition">
+              <i class="fa-solid fa-trash mr-1"></i>Delete
+            </button>
+          </td>
+        </tr>
+      `).join('');
+
+      updateStats();
+    }
+
+    function setPrice(id, value) {
+      const prod = products.find(p => p.id === id);
+      if (prod) {
+        const val = parseFloat(value);
+        prod.price = isNaN(val) || val < 0 ? 0 : val;
+        renderProductsTable();
+      }
+    }
+
+    function changeQuantity(id, delta) {
+      const prod = products.find(p => p.id === id);
+      if (prod) {
+        prod.quantity = Math.max(0, prod.quantity + delta);
+        renderProductsTable();
+      }
+    }
+
+    function setQuantity(id, value) {
+      const prod = products.find(p => p.id === id);
+      if (prod) {
+        const val = parseInt(value);
+        prod.quantity = isNaN(val) || val < 0 ? 0 : val;
+        renderProductsTable();
+      }
+    }
+
+    function renderInventoryTable() {
+      const tbody = document.getElementById('inventory-table-body');
+      tbody.innerHTML = products.map(item => `
+        <tr class="hover:bg-gray-50/50">
+          <td class="py-3 px-3 text-xs text-gray-500 font-mono">${item.sku}</td>
+          <td class="py-3 px-3 font-semibold text-gray-800">${item.name}</td>
+          <td class="py-3 px-3 font-bold">${item.quantity} units</td>
+          <td class="py-3 px-3 font-mono text-xs text-blue-600">${item.rfid}</td>
+          <td class="py-3 px-3 text-right">
+            <span class="px-2.5 py-1 text-xs font-semibold rounded-full ${
+              item.quantity > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
+            }">${item.quantity > 0 ? 'In Stock' : 'Out of Stock'}</span>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderOrdersTable() {
+      const tbody = document.getElementById('orders-table-body');
+      tbody.innerHTML = orders.map(order => `
+        <tr class="hover:bg-gray-50/50">
+          <td class="py-3 px-3 font-mono text-xs text-blue-600">${order.id}</td>
+          <td class="py-3 px-3">
+            <span class="px-2 py-0.5 text-[10px] font-semibold rounded ${
+              order.channel.includes('Online') ? 'bg-indigo-100 text-indigo-700' : 'bg-amber-100 text-amber-700'
+            }">${order.channel}</span>
+          </td>
+          <td class="py-3 px-3 font-semibold text-gray-800">${order.customer}</td>
+          <td class="py-3 px-3 text-gray-600">${order.productName}</td>
+          <td class="py-3 px-3 font-semibold text-gray-800">₹${Number(order.amount).toLocaleString('en-IN')}</td>
+          <td class="py-3 px-3">
+            <span class="px-2.5 py-1 text-xs font-semibold rounded-full ${
+              order.status === 'Dispatched' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
+            }">${order.status}</span>
+          </td>
+          <td class="py-3 px-3 text-right">
+            ${
+              order.status === 'Pending Dispatch'
+                ? `<button onclick="dispatchOrder('${order.id}')" class="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-semibold shadow-sm transition">
+                    <i class="fa-solid fa-truck-fast mr-1"></i>Dispatch Item
+                   </button>`
+                : `<span class="text-xs text-gray-400 font-medium">Completed</span>`
+            }
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function dispatchOrder(orderId) {
+      const order = orders.find(o => o.id === orderId);
+      if (order && order.status === 'Pending Dispatch') {
+        order.status = 'Dispatched';
+        changeQuantity(order.productId, -1);
+        renderOrdersTable();
+      }
+    }
+
+    function deleteProduct(id) {
+      products = products.filter(p => p.id !== id);
+      renderProductsTable();
+    }
+
+    function openAddModal() {
+      document.getElementById('add-product-modal').classList.remove('hidden');
+    }
+
+    function closeAddModal() {
+      document.getElementById('add-product-modal').classList.add('hidden');
+      document.getElementById('add-product-form').reset();
+    }
+
+    function handleAddProduct(event) {
+      event.preventDefault();
+      
+      const fileInput = document.getElementById('p-image');
+      const name = document.getElementById('p-name').value;
+      const sku = document.getElementById('p-sku').value;
+      const functional = document.getElementById('p-cat-functional').value;
+      const room = document.getElementById('p-cat-room').value;
+      const material = document.getElementById('p-cat-material').value;
+      const price = parseFloat(document.getElementById('p-price').value);
+      const quantity = Math.max(0, parseInt(document.getElementById('p-qty').value));
+      
+      let imageUrl = "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=100&auto=format&fit=crop";
+      
+      if (fileInput.files && fileInput.files[0]) {
+        imageUrl = URL.createObjectURL(fileInput.files[0]);
+      }
+
+      const newProduct = {
+        id: Date.now().toString(),
+        name,
+        sku,
+        functional,
+        room,
+        material,
+        price,
+        quantity,
+        rfid: "Unassigned",
+        image: imageUrl
+      };
+
+      products.unshift(newProduct);
+      closeAddModal();
+      renderProductsTable();
+    }
+
+    function updateStats() {
+      document.getElementById('stat-products').innerText = products.length;
+      document.getElementById('stat-stock').innerText = products.reduce((acc, p) => acc + p.quantity, 0);
+    }
+
+    function logout() {
+      document.getElementById('app-screen').classList.add('hidden');
+      document.getElementById('login-screen').classList.remove('hidden');
+    }
+
+    function handleLogin(event) {
+      event.preventDefault();
+      document.getElementById('login-screen').classList.add('hidden');
+      document.getElementById('app-screen').classList.remove('hidden');
+    }
+  </script>
+
+</body>
+</html>

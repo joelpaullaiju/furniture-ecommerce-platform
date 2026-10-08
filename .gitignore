@@ -1,0 +1,25 @@
+# Python / FastAPI
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+.env
+
+# Embedded / PlatformIO / Arduino
+.pio/
+.vscode/
+.idea/
+*.bin
+*.hex
+*.elf
+
+# Firebase & Secret Credentials
+*firebase-adminsdk*.json
+credentials.json
+serviceAccountKey.json
+
+# OS Artifacts
+.DS_Store
+Thumbs.db
