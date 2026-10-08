@@ -26,3 +26,4 @@ def process_rfid_scan(payload: dict):
         "status": "received",
         "data": payload
     }
+ 
