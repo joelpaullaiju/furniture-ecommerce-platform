@@ -7,7 +7,6 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
-    /* Hide scrollbar arrows on number inputs */
     input[type='number']::-webkit-inner-spin-button,
     input[type='number']::-webkit-outer-spin-button {
       -webkit-appearance: none;
@@ -17,7 +16,6 @@
 </head>
 <body class="bg-gray-100 font-sans antialiased">
 
-  <!-- FULL-SCREEN LOGIN / LOGOUT PAGE -->
   <div id="login-screen" class="hidden fixed inset-0 bg-slate-900 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full">
       <div class="text-center mb-6">
@@ -49,10 +47,7 @@
     </div>
   </div>
 
-  <!-- MAIN DASHBOARD APP -->
   <div id="app-screen" class="flex h-screen overflow-hidden">
-
-    <!-- Sidebar Taskbar -->
     <aside class="w-60 bg-white text-gray-600 flex flex-col justify-between p-4 shrink-0 border-r border-gray-200">
       <div>
         <div class="flex items-center space-x-3 px-2 py-3 mb-6 border-b border-gray-100">
@@ -101,10 +96,7 @@
       </div>
     </aside>
 
-    <!-- Main Content Area -->
     <main class="flex-1 overflow-y-auto p-8">
-      
-      <!-- VIEW 1: DASHBOARD -->
       <div id="view-dashboard">
         <div class="flex justify-between items-center mb-8">
           <div>
@@ -120,27 +112,27 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div class="bg-blue-500 rounded-2xl p-6 text-white shadow-lg shadow-blue-500/20 text-center">
             <h3 class="text-lg font-medium opacity-90">Total Products</h3>
-            <p class="text-4xl font-extrabold mt-2" id="stat-products">3</p>
+            <p class="text-4xl font-extrabold mt-2" id="stat-products">0</p>
           </div>
           <div class="bg-emerald-500 rounded-2xl p-6 text-white shadow-lg shadow-emerald-500/20 text-center">
             <h3 class="text-lg font-medium opacity-90">Total Stock</h3>
-            <p class="text-4xl font-extrabold mt-2" id="stat-stock">37</p>
+            <p class="text-4xl font-extrabold mt-2" id="stat-stock">0</p>
           </div>
           <div class="bg-amber-500 rounded-2xl p-6 text-white shadow-lg shadow-amber-500/20 text-center">
-            <h3 class="text-lg font-medium opacity-90">Orders Today</h3>
-            <p class="text-4xl font-extrabold mt-2">1</p>
+            <h3 class="text-lg font-medium opacity-90">Total Orders</h3>
+            <p class="text-4xl font-extrabold mt-2" id="stat-orders">0</p>
           </div>
           <div class="bg-purple-600 rounded-2xl p-6 text-white shadow-lg shadow-purple-600/20 text-center">
-            <h3 class="text-lg font-medium opacity-90">Daily Revenue</h3>
-            <p class="text-4xl font-extrabold mt-2">₹14,200</p>
+            <h3 class="text-lg font-medium opacity-90">Total Revenue</h3>
+            <p class="text-4xl font-extrabold mt-2" id="stat-revenue">₹0</p>
           </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
             <h2 class="text-lg font-bold text-gray-800 border-b pb-3 border-gray-100">Out of Stock Products</h2>
-            <div class="py-4">
-              <p class="text-base font-semibold text-gray-800">Minimalist Velvet Sofa <span class="text-sm font-normal text-gray-400">(Living Room)</span></p>
+            <div class="py-4" id="out-of-stock-list">
+              <p class="text-xs text-gray-400">All products currently in stock.</p>
             </div>
           </div>
           <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
@@ -153,14 +145,13 @@
           </div>
           <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
             <h2 class="text-lg font-bold text-gray-800 border-b pb-3 border-gray-100">Low Stock Products</h2>
-            <div class="py-3 space-y-1.5 text-sm text-gray-600">
-              <p><span class="font-bold text-gray-800">Teak Executive Desk</span> - 2 left <span class="text-gray-400">(Wooden)</span></p>
+            <div class="py-3 space-y-1.5 text-sm text-gray-600" id="low-stock-list">
+              <p class="text-xs text-gray-400">No low stock items.</p>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- VIEW 2: LISTINGS -->
       <div id="view-listings" class="hidden">
         <div class="flex justify-between items-center mb-8">
           <div>
@@ -192,7 +183,6 @@
         </div>
       </div>
 
-      <!-- VIEW 3: INVENTORY -->
       <div id="view-inventory" class="hidden">
         <div class="mb-8">
           <h1 class="text-3xl font-bold text-gray-800">Warehouse Inventory</h1>
@@ -217,7 +207,6 @@
         </div>
       </div>
 
-      <!-- VIEW 4: ORDERS -->
       <div id="view-orders" class="hidden">
         <div class="mb-8">
           <h1 class="text-3xl font-bold text-gray-800">Orders</h1>
@@ -244,7 +233,6 @@
         </div>
       </div>
 
-      <!-- VIEW 5: REPORTS -->
       <div id="view-reports" class="hidden">
         <div class="mb-8">
           <h1 class="text-3xl font-bold text-gray-800">Sales Reports</h1>
@@ -257,7 +245,7 @@
               <h3 class="font-bold text-gray-800">Daily Sales Report</h3>
               <i class="fa-solid fa-calendar-day text-blue-500"></i>
             </div>
-            <p class="text-3xl font-extrabold text-gray-800 mt-4">₹14,200</p>
+            <p class="text-3xl font-extrabold text-gray-800 mt-4" id="report-daily">₹0</p>
             <p class="text-xs text-emerald-600 mt-1"><i class="fa-solid fa-arrow-up mr-1"></i>+12% vs yesterday</p>
           </div>
 
@@ -281,32 +269,27 @@
         </div>
       </div>
 
-      <!-- VIEW 6: NOTIFICATIONS -->
       <div id="view-notifications" class="hidden">
         <div class="mb-8">
           <h1 class="text-3xl font-bold text-gray-800">Notifications</h1>
           <p class="text-sm text-gray-500 mt-1">Real-time alerts and activity logs</p>
         </div>
 
-        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 space-y-4">
+        <div id="notifications-container" class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 space-y-4">
           <div class="flex items-center space-x-4 p-4 rounded-xl bg-blue-50 border-l-4 border-blue-500">
             <i class="fa-solid fa-circle-check text-blue-600 text-xl"></i>
             <div>
-              <p class="font-bold text-gray-800 text-sm">1 order placed</p>
-              <p class="text-xs text-gray-500">Order #ORD-104 placed by Rahul Sharma (₹14,200)</p>
+              <p class="font-bold text-gray-800 text-sm">System Connected</p>
+              <p class="text-xs text-gray-500">FastAPI & WebSocket server operational</p>
             </div>
           </div>
         </div>
       </div>
-
     </main>
-
   </div>
 
-  <!-- ADD PRODUCT MODAL -->
   <div id="add-product-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
     <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full p-6 border border-gray-100 my-8 overflow-y-auto max-h-[90vh]">
-      
       <div class="flex justify-between items-center pb-4 border-b border-gray-100">
         <h3 class="text-lg font-bold text-gray-800">Add New Furniture Product</h3>
         <button onclick="closeAddModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
@@ -371,13 +354,8 @@
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Description</label>
-          <textarea id="p-desc" rows="2" placeholder="Enter product details and specs..." class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500"></textarea>
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Product Photo</label>
-          <input type="file" id="p-image" accept="image/*" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+          <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">RFID UID</label>
+          <input type="text" id="p-rfid" placeholder="e.g. A38F1209" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500 font-mono" />
         </div>
 
         <div class="flex justify-end space-x-3 pt-4 border-t border-gray-100">
@@ -385,21 +363,94 @@
           <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700">Save Product</button>
         </div>
       </form>
-
     </div>
   </div>
 
   <script>
-    let products = [
-      { id: "1", name: "Modern Oak Dining Table", sku: "FURN-TBL-001", functional: "Tables", room: "Dining Room", material: "Wooden", price: 28500, quantity: 12, rfid: "E28068900000", image: "https://images.unsplash.com/photo-1530018607912-eff2daa1bac4?w=100&auto=format&fit=crop" },
-      { id: "2", name: "Ergonomic Office Chair", sku: "FURN-CHR-004", functional: "Seating", room: "Home Office", material: "Upholstered", price: 14200, quantity: 25, rfid: "E28068900001", image: "https://images.unsplash.com/photo-1580481072645-022f9a6d1270?w=100&auto=format&fit=crop" },
-      { id: "3", name: "Minimalist Velvet Sofa", sku: "FURN-SOF-002", functional: "Seating", room: "Living Room", material: "Upholstered", price: 41800, quantity: 0, rfid: "Unassigned", image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=100&auto=format&fit=crop" }
-    ];
+    let products = [];
+    let orders = [];
 
-    let orders = [
-      { id: "ORD-104", channel: "Online Store", customer: "Rahul Sharma", productId: "2", productName: "Ergonomic Office Chair", amount: 14200, status: "Pending Dispatch" },
-      { id: "ORD-103", channel: "In-Store (Offline)", customer: "Walk-in Customer", productId: "1", productName: "Modern Oak Dining Table", amount: 28500, status: "Dispatched" }
-    ];
+    const API_BASE = "http://localhost:8000";
+
+    async function fetchProducts() {
+      try {
+        const response = await fetch(`${API_BASE}/api/products`);
+        if (response.ok) {
+          const data = await response.json();
+          products = data.map(item => ({
+            id: String(item.id),
+            name: item.name,
+            sku: item.sku || `FURN-00${item.id}`,
+            functional: item.functional || "Seating",
+            room: item.room || "Living Room",
+            material: item.material || "Wooden",
+            price: item.price,
+            quantity: item.stock !== undefined ? item.stock : 0,
+            rfid: item.rfid_uid || item.rfid || "Unassigned",
+            image: item.image_url || item.image || "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=100"
+          }));
+
+          renderProductsTable();
+          renderInventoryTable();
+          updateStats();
+        }
+      } catch (err) {
+        console.error("Error fetching products from API:", err);
+      }
+    }
+
+    async function fetchOrders() {
+      try {
+        const response = await fetch(`${API_BASE}/api/orders`);
+        if (response.ok) {
+          orders = await response.json();
+          renderOrdersTable();
+          updateStats();
+        }
+      } catch (err) {
+        console.error("Error fetching orders from API:", err);
+      }
+    }
+
+    function connectWebSocket() {
+      const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsHost = window.location.hostname || 'localhost';
+      const ws = new WebSocket(`${wsProtocol}//${wsHost}:8000/ws`);
+
+      ws.onopen = () => console.log("Admin Dashboard WebSocket Connected");
+
+      ws.onmessage = (event) => {
+        const message = JSON.parse(event.data);
+
+        if (message.event === "order_created") {
+          addNotification(`New order placed! Updating order list.`);
+          fetchOrders();
+          fetchProducts();
+        }
+
+        if (message.event === "inventory_updated" || message.event === "live_scan") {
+          fetchProducts();
+        }
+      };
+
+      ws.onclose = () => setTimeout(connectWebSocket, 3000);
+    }
+
+    function addNotification(text) {
+      const container = document.getElementById("notifications-container");
+      if (container) {
+        const item = document.createElement("div");
+        item.className = "flex items-center space-x-4 p-4 rounded-xl bg-blue-50 border-l-4 border-blue-500 animate-fade-in";
+        item.innerHTML = `
+          <i class="fa-solid fa-wifi text-blue-600 text-xl"></i>
+          <div>
+            <p class="font-bold text-gray-800 text-sm">Live Store Event</p>
+            <p class="text-xs text-gray-500">${text}</p>
+          </div>
+        `;
+        container.prepend(item);
+      }
+    }
 
     function switchTab(tab) {
       const views = {
@@ -419,19 +470,20 @@
         notifications: document.getElementById('nav-notifications')
       };
 
-      Object.keys(views).forEach(k => views[k].classList.add('hidden'));
-      Object.keys(btns).forEach(k => btns[k].className = "w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-50 transition");
+      Object.keys(views).forEach(k => { if (views[k]) views[k].classList.add('hidden'); });
+      Object.keys(btns).forEach(k => { if (btns[k]) btns[k].className = "w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-50 transition"; });
 
-      views[tab].classList.remove('hidden');
-      btns[tab].className = "w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-gray-900 font-bold bg-gray-100 transition";
+      if (views[tab]) views[tab].classList.remove('hidden');
+      if (btns[tab]) btns[tab].className = "w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-gray-900 font-bold bg-gray-100 transition";
 
       if (tab === 'listings') renderProductsTable();
       if (tab === 'inventory') renderInventoryTable();
-      if (tab === 'orders') renderOrdersTable();
+      if (tab === 'orders') fetchOrders();
     }
 
     function renderProductsTable() {
       const tbody = document.getElementById('products-table-body');
+      if (!tbody) return;
       tbody.innerHTML = products.map(item => `
         <tr class="hover:bg-gray-50/50">
           <td class="py-3 px-3 flex items-center space-x-3">
@@ -473,11 +525,29 @@
       updateStats();
     }
 
+    async function syncProductToBackend(product) {
+      try {
+        await fetch(`${API_BASE}/api/products/${product.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: product.name,
+            price: product.price,
+            stock: product.quantity,
+            rfid_uid: product.rfid === "Unassigned" ? null : product.rfid
+          })
+        });
+      } catch (e) {
+        console.error("Failed to sync updated product to backend:", e);
+      }
+    }
+
     function setPrice(id, value) {
       const prod = products.find(p => p.id === id);
       if (prod) {
         const val = parseFloat(value);
         prod.price = isNaN(val) || val < 0 ? 0 : val;
+        syncProductToBackend(prod);
         renderProductsTable();
       }
     }
@@ -486,6 +556,7 @@
       const prod = products.find(p => p.id === id);
       if (prod) {
         prod.quantity = Math.max(0, prod.quantity + delta);
+        syncProductToBackend(prod);
         renderProductsTable();
       }
     }
@@ -495,12 +566,14 @@
       if (prod) {
         const val = parseInt(value);
         prod.quantity = isNaN(val) || val < 0 ? 0 : val;
+        syncProductToBackend(prod);
         renderProductsTable();
       }
     }
 
     function renderInventoryTable() {
       const tbody = document.getElementById('inventory-table-body');
+      if (!tbody) return;
       tbody.innerHTML = products.map(item => `
         <tr class="hover:bg-gray-50/50">
           <td class="py-3 px-3 text-xs text-gray-500 font-mono">${item.sku}</td>
@@ -518,6 +591,7 @@
 
     function renderOrdersTable() {
       const tbody = document.getElementById('orders-table-body');
+      if (!tbody) return;
       tbody.innerHTML = orders.map(order => `
         <tr class="hover:bg-gray-50/50">
           <td class="py-3 px-3 font-mono text-xs text-blue-600">${order.id}</td>
@@ -551,13 +625,17 @@
       const order = orders.find(o => o.id === orderId);
       if (order && order.status === 'Pending Dispatch') {
         order.status = 'Dispatched';
-        changeQuantity(order.productId, -1);
         renderOrdersTable();
       }
     }
 
-    function deleteProduct(id) {
+    async function deleteProduct(id) {
       products = products.filter(p => p.id !== id);
+      try {
+        await fetch(`${API_BASE}/api/products/${id}`, { method: "DELETE" });
+      } catch (e) {
+        console.error("Failed to delete product on server:", e);
+      }
       renderProductsTable();
     }
 
@@ -570,45 +648,73 @@
       document.getElementById('add-product-form').reset();
     }
 
-    function handleAddProduct(event) {
+    async function handleAddProduct(event) {
       event.preventDefault();
       
-      const fileInput = document.getElementById('p-image');
       const name = document.getElementById('p-name').value;
       const sku = document.getElementById('p-sku').value;
-      const functional = document.getElementById('p-cat-functional').value;
-      const room = document.getElementById('p-cat-room').value;
-      const material = document.getElementById('p-cat-material').value;
       const price = parseFloat(document.getElementById('p-price').value);
       const quantity = Math.max(0, parseInt(document.getElementById('p-qty').value));
-      
-      let imageUrl = "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=100&auto=format&fit=crop";
-      
-      if (fileInput.files && fileInput.files[0]) {
-        imageUrl = URL.createObjectURL(fileInput.files[0]);
-      }
+      const rfid = document.getElementById('p-rfid').value || "Unassigned";
 
-      const newProduct = {
-        id: Date.now().toString(),
-        name,
-        sku,
-        functional,
-        room,
-        material,
-        price,
-        quantity,
-        rfid: "Unassigned",
-        image: imageUrl
+      const newProductPayload = {
+        name: name,
+        price: price,
+        stock: quantity,
+        rfid_uid: rfid === "Unassigned" ? null : rfid,
+        functional: document.getElementById('p-cat-functional') ? document.getElementById('p-cat-functional').value : "Seating",
+        room: document.getElementById('p-cat-room') ? document.getElementById('p-cat-room').value : "Living Room",
+        material: document.getElementById('p-cat-material') ? document.getElementById('p-cat-material').value : "Wooden"
       };
 
-      products.unshift(newProduct);
-      closeAddModal();
-      renderProductsTable();
+      try {
+        const response = await fetch(`${API_BASE}/api/products`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newProductPayload)
+        });
+
+        if (response.ok) {
+          closeAddModal();
+          await fetchProducts();
+        } else {
+          alert("Failed to save product to backend.");
+        }
+      } catch (err) {
+        console.error("Error saving product:", err);
+      }
     }
 
     function updateStats() {
-      document.getElementById('stat-products').innerText = products.length;
-      document.getElementById('stat-stock').innerText = products.reduce((acc, p) => acc + p.quantity, 0);
+      const statProducts = document.getElementById('stat-products');
+      const statStock = document.getElementById('stat-stock');
+      const statOrders = document.getElementById('stat-orders');
+      const statRevenue = document.getElementById('stat-revenue');
+      const reportDaily = document.getElementById('report-daily');
+
+      if (statProducts) statProducts.innerText = products.length;
+      if (statStock) statStock.innerText = products.reduce((acc, p) => acc + p.quantity, 0);
+      if (statOrders) statOrders.innerText = orders.length;
+
+      const totalRev = orders.reduce((acc, o) => acc + o.amount, 0);
+      if (statRevenue) statRevenue.innerText = `₹${totalRev.toLocaleString('en-IN')}`;
+      if (reportDaily) reportDaily.innerText = `₹${totalRev.toLocaleString('en-IN')}`;
+
+      const lowStock = products.filter(p => p.quantity > 0 && p.quantity <= 3);
+      const lowStockEl = document.getElementById('low-stock-list');
+      if (lowStockEl) {
+        lowStockEl.innerHTML = lowStock.length === 0 
+          ? `<p class="text-xs text-gray-400">No low stock items.</p>`
+          : lowStock.map(p => `<p><span class="font-bold text-gray-800">${p.name}</span> - ${p.quantity} left <span class="text-gray-400">(${p.material})</span></p>`).join('');
+      }
+
+      const outOfStock = products.filter(p => p.quantity === 0);
+      const outOfStockEl = document.getElementById('out-of-stock-list');
+      if (outOfStockEl) {
+        outOfStockEl.innerHTML = outOfStock.length === 0
+          ? `<p class="text-xs text-gray-400">All products currently in stock.</p>`
+          : outOfStock.map(p => `<p class="text-base font-semibold text-gray-800">${p.name} <span class="text-sm font-normal text-gray-400">(${p.room})</span></p>`).join('');
+      }
     }
 
     function logout() {
@@ -621,7 +727,10 @@
       document.getElementById('login-screen').classList.add('hidden');
       document.getElementById('app-screen').classList.remove('hidden');
     }
-  </script>
 
+    fetchProducts();
+    fetchOrders();
+    connectWebSocket();
+  </script>
 </body>
 </html>

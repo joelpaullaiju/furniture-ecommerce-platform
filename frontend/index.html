@@ -7,7 +7,6 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
-    /* Hide scrollbar arrows on number input for clean UI */
     input[type='number']::-webkit-inner-spin-button,
     input[type='number']::-webkit-outer-spin-button {
       -webkit-appearance: none;
@@ -17,11 +16,8 @@
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans antialiased">
 
-  <!-- TOP NAVIGATION BAR -->
   <header class="bg-white border-b border-gray-200 sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-      
-      <!-- Brand Logo -->
       <div class="flex items-center space-x-3">
         <div class="p-2 bg-blue-600 text-white rounded-xl">
           <i class="fa-solid fa-couch text-xl"></i>
@@ -32,23 +28,19 @@
         </div>
       </div>
 
-      <!-- Search Bar -->
       <div class="hidden md:flex flex-1 max-w-md mx-8 relative">
         <input type="text" id="search-input" onkeyup="filterProducts()" placeholder="Search tables, chairs, sofas..." class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 bg-gray-50" />
         <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-gray-400 text-sm"></i>
       </div>
 
-      <!-- Cart Button -->
       <button onclick="toggleCartDrawer()" class="relative p-2.5 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl transition flex items-center space-x-2">
         <i class="fa-solid fa-bag-shopping text-lg"></i>
         <span class="text-xs font-bold hidden sm:inline">Cart</span>
         <span id="cart-count" class="bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
       </button>
-
     </div>
   </header>
 
-  <!-- HERO BANNER -->
   <section class="bg-slate-900 text-white py-12 px-6">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
       <div class="max-w-lg">
@@ -59,10 +51,7 @@
     </div>
   </section>
 
-  <!-- MAIN CATALOG AREA -->
   <main class="max-w-7xl mx-auto px-6 py-10 flex flex-col lg:flex-row gap-8">
-
-    <!-- CATEGORY FILTERS SIDEBAR -->
     <aside class="w-full lg:w-64 shrink-0 space-y-6">
       <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm space-y-5">
         <div class="flex justify-between items-center border-b pb-3">
@@ -70,11 +59,10 @@
           <button onclick="resetFilters()" class="text-xs text-blue-600 hover:underline font-semibold">Reset</button>
         </div>
 
-        <!-- Functional Filter -->
         <div>
           <label class="block text-xs font-bold uppercase text-gray-400 mb-2">Functional</label>
           <select id="filter-functional" onchange="filterProducts()" class="w-full p-2 border border-gray-200 rounded-lg text-sm bg-gray-50 focus:outline-none">
-            <option value="All">All Categories</option>
+            <option value="All" selected>All Categories</option>
             <option value="Seating">Seating</option>
             <option value="Tables">Tables</option>
             <option value="Beds">Beds</option>
@@ -83,11 +71,10 @@
           </select>
         </div>
 
-        <!-- Room Filter -->
         <div>
           <label class="block text-xs font-bold uppercase text-gray-400 mb-2">Room</label>
           <select id="filter-room" onchange="filterProducts()" class="w-full p-2 border border-gray-200 rounded-lg text-sm bg-gray-50 focus:outline-none">
-            <option value="All">All Rooms</option>
+            <option value="All" selected>All Rooms</option>
             <option value="Living Room">Living Room</option>
             <option value="Bedroom">Bedroom</option>
             <option value="Dining Room">Dining Room</option>
@@ -97,11 +84,10 @@
           </select>
         </div>
 
-        <!-- Material Filter -->
         <div>
           <label class="block text-xs font-bold uppercase text-gray-400 mb-2">Material</label>
           <select id="filter-material" onchange="filterProducts()" class="w-full p-2 border border-gray-200 rounded-lg text-sm bg-gray-50 focus:outline-none">
-            <option value="All">All Materials</option>
+            <option value="All" selected>All Materials</option>
             <option value="Wooden">Wooden</option>
             <option value="Metal">Metal</option>
             <option value="Upholstered">Upholstered</option>
@@ -112,31 +98,22 @@
       </div>
     </aside>
 
-    <!-- PRODUCT GRID -->
     <section class="flex-1">
-      <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Products populated via JavaScript -->
-      </div>
+      <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
     </section>
-
   </main>
 
-  <!-- CART SIDE DRAWER -->
   <div id="cart-drawer" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex justify-end">
     <div class="bg-white w-full max-w-md h-full shadow-2xl flex flex-col justify-between p-6">
-      
       <div>
         <div class="flex justify-between items-center pb-4 border-b">
           <h3 class="text-lg font-bold text-gray-900">Your Shopping Cart</h3>
           <button onclick="toggleCartDrawer()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
         </div>
 
-        <div id="cart-items" class="py-4 space-y-4 max-h-[60vh] overflow-y-auto">
-          <!-- Cart Items Injected Here -->
-        </div>
+        <div id="cart-items" class="py-4 space-y-4 max-h-[60vh] overflow-y-auto"></div>
       </div>
 
-      <!-- Checkout Footer -->
       <div class="border-t pt-4 space-y-3">
         <div class="flex justify-between items-center text-gray-800">
           <span class="font-semibold">Subtotal</span>
@@ -147,14 +124,11 @@
           <i class="fa-solid fa-arrow-right text-xs"></i>
         </button>
       </div>
-
     </div>
   </div>
 
-  <!-- SAMPLE PAYMENT MODAL -->
   <div id="payment-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 border border-gray-100 space-y-5">
-      
       <div class="flex justify-between items-center pb-3 border-b">
         <div>
           <h3 class="text-lg font-bold text-gray-900">Select Payment Method</h3>
@@ -164,8 +138,11 @@
       </div>
 
       <form onsubmit="handlePaymentSubmit(event)" class="space-y-4">
-        
-        <!-- Payment Options -->
+        <div>
+          <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Your Full Name</label>
+          <input type="text" id="cust-name" required placeholder="e.g. Joel Paul" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500" />
+        </div>
+
         <div class="space-y-2">
           <label class="flex items-center justify-between p-3 border border-gray-200 rounded-xl cursor-pointer hover:border-blue-500 transition">
             <div class="flex items-center space-x-3">
@@ -200,10 +177,9 @@
           </label>
         </div>
 
-        <!-- Customer Phone / UPI Input -->
         <div>
           <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">UPI ID or Mobile Number</label>
-          <input type="text" placeholder="e.g. 9876543210@paytm or user@upi" required class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500" />
+          <input type="text" required placeholder="e.g. 9876543210@paytm or user@upi" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500" />
         </div>
 
         <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center space-x-2">
@@ -211,21 +187,57 @@
           <span>Pay & Confirm Order</span>
         </button>
       </form>
-
     </div>
   </div>
 
   <script>
-    let catalog = [
-      { id: "1", name: "Modern Oak Dining Table", functional: "Tables", room: "Dining Room", material: "Wooden", price: 28500, stock: 12, image: "https://images.unsplash.com/photo-1530018607912-eff2daa1bac4?w=400&auto=format&fit=crop" },
-      { id: "2", name: "Ergonomic Office Chair", functional: "Seating", room: "Home Office", material: "Upholstered", price: 14200, stock: 25, image: "https://images.unsplash.com/photo-1580481072645-022f9a6d1270?w=400&auto=format&fit=crop" },
-      { id: "3", name: "Minimalist Velvet Sofa", functional: "Seating", room: "Living Room", material: "Upholstered", price: 41800, stock: 0, image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&auto=format&fit=crop" }
-    ];
-
+    let catalog = [];
     let cart = [];
+    const API_BASE = "http://localhost:8000";
+
+    async function fetchCatalog() {
+      try {
+        const response = await fetch(`${API_BASE}/api/products`);
+        if (response.ok) {
+          const rawData = await response.json();
+          catalog = rawData.map(item => ({
+            id: String(item.id),
+            name: item.name,
+            functional: item.functional || "Seating",
+            room: item.room || "Living Room",
+            material: item.material || "Wooden",
+            price: item.price,
+            stock: item.stock !== undefined ? item.stock : 0,
+            image: item.image_url || item.image || "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400"
+          }));
+          filterProducts();
+        }
+      } catch (error) {
+        console.error("Backend offline:", error);
+      }
+    }
+
+    function connectWebSocket() {
+      const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsHost = window.location.hostname || 'localhost';
+      const ws = new WebSocket(`${wsProtocol}//${wsHost}:8000/ws`);
+
+      ws.onopen = () => console.log("Storefront WebSocket Connected");
+
+      ws.onmessage = (event) => {
+        const message = JSON.parse(event.data);
+        if (message.event === "inventory_updated" || message.event === "order_created" || message.event === "live_scan") {
+          fetchCatalog();
+        }
+      };
+
+      ws.onclose = () => setTimeout(connectWebSocket, 3000);
+    }
 
     function renderGrid(products) {
       const grid = document.getElementById("product-grid");
+      if (!grid) return;
+
       if (products.length === 0) {
         grid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-400"><p>No products found matching your filters.</p></div>`;
         return;
@@ -239,10 +251,11 @@
               <div class="flex flex-wrap gap-1 mb-2">
                 <span class="px-2 py-0.5 text-[10px] bg-blue-50 text-blue-600 font-semibold rounded">${item.functional}</span>
                 <span class="px-2 py-0.5 text-[10px] bg-emerald-50 text-emerald-600 font-semibold rounded">${item.room}</span>
+                <span class="px-2 py-0.5 text-[10px] ${item.stock > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'} font-bold rounded">Stock: ${item.stock}</span>
               </div>
               <h3 class="font-bold text-gray-900 text-base mb-1">${item.name}</h3>
               <p class="text-xs text-gray-500 mb-3">${item.material} Craftsmanship</p>
-              <p class="text-xl font-extrabold text-gray-900">₹${item.price.toLocaleString('en-IN')}</p>
+              <p class="text-xl font-extrabold text-gray-900">₹${Number(item.price).toLocaleString('en-IN')}</p>
             </div>
           </div>
           
@@ -259,10 +272,10 @@
     }
 
     function filterProducts() {
-      const search = document.getElementById('search-input').value.toLowerCase();
-      const functional = document.getElementById('filter-functional').value;
-      const room = document.getElementById('filter-room').value;
-      const material = document.getElementById('filter-material').value;
+      const search = document.getElementById('search-input') ? document.getElementById('search-input').value.toLowerCase() : '';
+      const functional = document.getElementById('filter-functional') ? document.getElementById('filter-functional').value : 'All';
+      const room = document.getElementById('filter-room') ? document.getElementById('filter-room').value : 'All';
+      const material = document.getElementById('filter-material') ? document.getElementById('filter-material').value : 'All';
 
       const filtered = catalog.filter(item => {
         const matchesSearch = item.name.toLowerCase().includes(search);
@@ -276,18 +289,18 @@
     }
 
     function resetFilters() {
-      document.getElementById('search-input').value = '';
-      document.getElementById('filter-functional').value = 'All';
-      document.getElementById('filter-room').value = 'All';
-      document.getElementById('filter-material').value = 'All';
+      if (document.getElementById('search-input')) document.getElementById('search-input').value = '';
+      if (document.getElementById('filter-functional')) document.getElementById('filter-functional').value = 'All';
+      if (document.getElementById('filter-room')) document.getElementById('filter-room').value = 'All';
+      if (document.getElementById('filter-material')) document.getElementById('filter-material').value = 'All';
       renderGrid(catalog);
     }
 
     function addToCart(id) {
-      const item = catalog.find(p => p.id === id);
+      const item = catalog.find(p => String(p.id) === String(id));
       if (!item || item.stock === 0) return;
 
-      const existing = cart.find(c => c.id === id);
+      const existing = cart.find(c => String(c.id) === String(id));
       if (existing) {
         if (existing.qty < item.stock) existing.qty++;
       } else {
@@ -300,13 +313,11 @@
 
     function changeCartQty(index, delta) {
       const item = cart[index];
-      const stockLimit = catalog.find(p => p.id === item.id)?.stock || 1;
+      const stockLimit = catalog.find(p => String(p.id) === String(item.id))?.stock || 1;
 
       item.qty += delta;
       if (item.qty > stockLimit) item.qty = stockLimit;
-      if (item.qty <= 0) {
-        cart.splice(index, 1);
-      }
+      if (item.qty <= 0) cart.splice(index, 1);
       updateCart();
     }
 
@@ -331,11 +342,10 @@
               <img src="${item.image}" class="w-12 h-12 object-cover rounded-lg" />
               <div>
                 <p class="font-bold text-xs text-gray-800">${item.name}</p>
-                <p class="text-xs text-gray-500 font-semibold">₹${item.price.toLocaleString('en-IN')}</p>
+                <p class="text-xs text-gray-500 font-semibold">₹${Number(item.price).toLocaleString('en-IN')}</p>
               </div>
             </div>
 
-            <!-- Cart Item Quantity Controls -->
             <div class="flex items-center space-x-2">
               <div class="inline-flex items-center space-x-1 border border-gray-200 rounded-lg bg-white p-1">
                 <button onclick="changeCartQty(${idx}, -1)" class="w-5 h-5 rounded bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs flex items-center justify-center">-</button>
@@ -371,19 +381,42 @@
       document.getElementById("payment-modal").classList.add("hidden");
     }
 
-    function handlePaymentSubmit(event) {
+    async function handlePaymentSubmit(event) {
       event.preventDefault();
       const selectedMethod = document.querySelector('input[name="payment_method"]:checked').value;
-      alert(`Payment Successful via ${selectedMethod}! Your order has been placed and sent to the Admin Orders dashboard.`);
-      
+      const customerName = document.getElementById('cust-name').value.trim() || "Online Customer";
+
+      for (const item of cart) {
+        const orderPayload = {
+          channel: `Online Store (${selectedMethod})`,
+          customer: customerName,
+          productId: String(item.id),
+          productName: item.name,
+          amount: item.price * item.qty,
+          quantity: item.qty
+        };
+
+        try {
+          await fetch(`${API_BASE}/api/orders`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(orderPayload)
+          });
+        } catch (err) {
+          console.error("Error creating order:", err);
+        }
+      }
+
+      alert(`Payment Successful! Thank you ${customerName}. Your order has been placed.`);
       cart = [];
       updateCart();
       closePaymentModal();
       toggleCartDrawer();
+      fetchCatalog();
     }
 
-    // Initial Load
-    renderGrid(catalog);
+    fetchCatalog();
+    connectWebSocket();
   </script>
 </body>
-</html> 
+</html>
