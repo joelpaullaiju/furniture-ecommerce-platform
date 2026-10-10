@@ -193,7 +193,7 @@
   <script>
     let catalog = [];
     let cart = [];
-    const API_BASE = "http://localhost:8000";
+    const API_BASE = "http://192.168.0.163:8000";
 
     async function fetchCatalog() {
       try {
@@ -218,21 +218,22 @@
     }
 
     function connectWebSocket() {
-      const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const wsHost = window.location.hostname || 'localhost';
-      const ws = new WebSocket(`${wsProtocol}//${wsHost}:8000/ws`);
+  // Extract host/IP directly from API_BASE
+  const host = API_BASE.replace(/^https?:\/\//, '').split('/')[0];
+  const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+  const ws = new WebSocket(`${wsProtocol}//${host}/ws`);
 
-      ws.onopen = () => console.log("Storefront WebSocket Connected");
+  ws.onopen = () => console.log("WebSocket Connected to " + host);
 
-      ws.onmessage = (event) => {
-        const message = JSON.parse(event.data);
-        if (message.event === "inventory_updated" || message.event === "order_created" || message.event === "live_scan") {
-          fetchCatalog();
-        }
-      };
-
-      ws.onclose = () => setTimeout(connectWebSocket, 3000);
+  ws.onmessage = (event) => {
+    const message = JSON.parse(event.data);
+    if (message.event === "inventory_updated" || message.event === "order_created" || message.event === "live_scan") {
+      fetchCatalog();
     }
+  };
+
+  ws.onclose = () => setTimeout(connectWebSocket, 3000);
+}
 
     function renderGrid(products) {
       const grid = document.getElementById("product-grid");
