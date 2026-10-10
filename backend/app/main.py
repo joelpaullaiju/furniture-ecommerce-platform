@@ -1,3 +1,4 @@
+import sqlite3
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -13,65 +14,59 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# In-Memory Inventory Database
-inventory_db = [
-    {
-        "id": 1,
-        "name": "Modern Oak Dining Table",
-        "price": 28500.0,
-        "stock": 12,
-        "rfid_uid": "A38F1209",
-        "functional": "Tables",
-        "room": "Dining Room",
-        "material": "Wooden",
-        "image_url": "https://images.unsplash.com/photo-1530018607912-eff2daa1bac4?w=400"
-    },
-    {
-        "id": 2,
-        "name": "Ergonomic Office Chair",
-        "price": 14200.0,
-        "stock": 25,
-        "rfid_uid": "B49G2310",
-        "functional": "Seating",
-        "room": "Home Office",
-        "material": "Upholstered",
-        "image_url": "https://images.unsplash.com/photo-1580481072645-022f9a6d1270?w=400"
-    },
-    {
-        "id": 3,
-        "name": "Minimalist Velvet Sofa",
-        "price": 41800.0,
-        "stock": 5,
-        "rfid_uid": "C50H3411",
-        "functional": "Seating",
-        "room": "Living Room",
-        "material": "Upholstered",
-        "image_url": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400"
-    }
-]
+DB_FILE = "furniture.db"
 
-# In-Memory Orders Database
-orders_db = [
-    {
-        "id": "ORD-104",
-        "channel": "Online Store",
-        "customer": "Rahul Sharma",
-        "productId": "2",
-        "productName": "Ergonomic Office Chair",
-        "amount": 14200.0,
-        "status": "Pending Dispatch"
-    },
-    {
-        "id": "ORD-103",
-        "channel": "In-Store (Offline)",
-        "customer": "Walk-in Customer",
-        "productId": "1",
-        "productName": "Modern Oak Dining Table",
-        "amount": 28500.0,
-        "status": "Dispatched"
-    }
-]
+def init_db():
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+    
+    # Products table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS products (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            price REAL NOT NULL,
+            stock INTEGER NOT NULL,
+            rfid_uid TEXT,
+            functional TEXT DEFAULT 'Seating',
+            room TEXT DEFAULT 'Living Room',
+            material TEXT DEFAULT 'Wooden',
+            image_url TEXT DEFAULT 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400'
+        )
+    """)
+    
+    # Orders table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS orders (
+            id TEXT PRIMARY KEY,
+            channel TEXT NOT NULL,
+            customer TEXT NOT NULL,
+            productId TEXT NOT NULL,
+            productName TEXT NOT NULL,
+            amount REAL NOT NULL,
+            status TEXT DEFAULT 'Pending Dispatch'
+        )
+    """)
+    
+    # Seed default products if database is empty
+    cursor.execute("SELECT COUNT(*) FROM products")
+    if cursor.fetchone()[0] == 0:
+        cursor.executemany("""
+            INSERT INTO products (name, price, stock, rfid_uid, functional, room, material, image_url)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """, [
+            ("Modern Oak Dining Table", 28500.0, 12, "A38F1209", "Tables", "Dining Room", "Wooden", "https://images.unsplash.com/photo-1530018607912-eff2daa1bac4?w=400"),
+            ("Ergonomic Office Chair", 14200.0, 25, "B49G2310", "Seating", "Home Office", "Upholstered", "https://images.unsplash.com/photo-1580481072645-022f9a6d1270?w=400"),
+            ("Minimalist Velvet Sofa", 41800.0, 5, "C50H3411", "Seating", "Living Room", "Upholstered", "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400")
+        ])
+    
+    conn.commit()
+    conn.close()
 
+# Initialize DB on startup
+init_db()
+
+# Connection Manager for WebSockets
 class ConnectionManager:
     def __init__(self):
         self.active_connections: List[WebSocket] = []
@@ -90,6 +85,10 @@ class ConnectionManager:
 
 manager = ConnectionManager()
 
+# Track RFID state in memory: { "RFID_UID": "IN" / "OUT" }
+rfid_scan_states = {}
+
+# Data Models
 class ProductUpdate(BaseModel):
     name: str
     price: float
@@ -114,77 +113,126 @@ class OrderCreate(BaseModel):
     amount: float
     quantity: int = 1
 
+class ScanPayload(BaseModel):
+    rfid_uid: str
+
+# Helper Function for Executing Queries
+def query_db(query: str, args=(), one=False, commit=False):
+    conn = sqlite3.connect(DB_FILE)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute(query, args)
+    if commit:
+        conn.commit()
+        last_id = cursor.lastrowid
+        conn.close()
+        return last_id
+    rv = cursor.fetchall()
+    conn.close()
+    return (rv[0] if rv else None) if one else rv
+
 # --- REST ENDPOINTS ---
 
 @app.get("/api/products")
 def get_products():
-    return inventory_db
+    rows = query_db("SELECT * FROM products ORDER BY id DESC")
+    return [dict(row) for row in rows]
 
 @app.post("/api/products")
 async def create_product(payload: ProductCreate):
-    new_id = len(inventory_db) + 1
-    new_item = {
-        "id": new_id,
-        "name": payload.name,
-        "price": payload.price,
-        "stock": payload.stock,
-        "rfid_uid": payload.rfid_uid.strip().upper() if payload.rfid_uid else "Unassigned",
-        "functional": payload.functional or "Seating",
-        "room": payload.room or "Living Room",
-        "material": payload.material or "Wooden",
-        "image_url": payload.image_url or "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400"
-    }
-    inventory_db.insert(0, new_item)
-    await manager.broadcast({"event": "inventory_updated", "data": inventory_db})
-    return new_item
+    rfid = payload.rfid_uid.strip().upper() if payload.rfid_uid else "Unassigned"
+    new_id = query_db("""
+        INSERT INTO products (name, price, stock, rfid_uid, functional, room, material, image_url)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    """, (payload.name, payload.price, payload.stock, rfid, payload.functional, payload.room, payload.material, payload.image_url), commit=True)
+    
+    await manager.broadcast({"event": "inventory_updated"})
+    return {"id": new_id, **payload.dict()}
 
 @app.put("/api/products/{product_id}")
 async def update_product(product_id: int, updated: ProductUpdate):
-    for item in inventory_db:
-        if item["id"] == product_id:
-            item["name"] = updated.name
-            item["price"] = updated.price
-            item["stock"] = updated.stock
-            if updated.rfid_uid:
-                item["rfid_uid"] = updated.rfid_uid.strip().upper()
-            await manager.broadcast({"event": "inventory_updated", "data": inventory_db})
-            return item
-    raise HTTPException(status_code=404, detail="Product not found")
+    rfid = updated.rfid_uid.strip().upper() if updated.rfid_uid else "Unassigned"
+    query_db("""
+        UPDATE products SET name = ?, price = ?, stock = ?, rfid_uid = ? WHERE id = ?
+    """, (updated.name, updated.price, updated.stock, rfid, product_id), commit=True)
+    
+    await manager.broadcast({"event": "inventory_updated"})
+    return {"status": "success"}
 
 @app.delete("/api/products/{product_id}")
 async def delete_product(product_id: int):
-    global inventory_db
-    inventory_db = [item for item in inventory_db if str(item["id"]) != str(product_id)]
-    await manager.broadcast({"event": "inventory_updated", "data": inventory_db})
+    query_db("DELETE FROM products WHERE id = ?", (product_id,), commit=True)
+    await manager.broadcast({"event": "inventory_updated"})
     return {"status": "success"}
 
 @app.get("/api/orders")
 def get_orders():
-    return orders_db
+    rows = query_db("SELECT * FROM orders ORDER BY rowid DESC")
+    return [dict(row) for row in rows]
 
 @app.post("/api/orders")
 async def create_order(payload: OrderCreate):
-    # 1. Reduce stock for the purchased product
-    for item in inventory_db:
-        if str(item["id"]) == str(payload.productId):
-            item["stock"] = max(0, item["stock"] - payload.quantity)
-            break
+    # Deduct stock from SQLite
+    query_db("UPDATE products SET stock = MAX(0, stock - ?) WHERE id = ?", (payload.quantity, payload.productId), commit=True)
 
-    # 2. Store Order
-    new_order = {
-        "id": f"ORD-{100 + len(orders_db) + 1}",
-        "channel": payload.channel,
-        "customer": payload.customer,
-        "productId": payload.productId,
-        "productName": payload.productName,
-        "amount": payload.amount,
-        "status": "Pending Dispatch"
-    }
-    orders_db.insert(0, new_order)
+    # Insert order record
+    order_count = query_db("SELECT COUNT(*) as count FROM orders", one=True)["count"]
+    order_id = f"ORD-{101 + order_count}"
     
-    # 3. Broadcast real-time WebSocket update for inventory and orders
-    await manager.broadcast({"event": "order_created", "orders": orders_db, "data": inventory_db})
-    return new_order
+    query_db("""
+        INSERT INTO orders (id, channel, customer, productId, productName, amount, status)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    """, (order_id, payload.channel, payload.customer, payload.productId, payload.productName, payload.amount, "Pending Dispatch"), commit=True)
+
+    await manager.broadcast({"event": "order_created"})
+    return {"id": order_id, "status": "created"}
+
+# --- ESP32 RFID SCAN ENDPOINT (TOGGLE CHECK-IN / CHECK-OUT) ---
+@app.post("/api/scan")
+async def handle_rfid_scan(payload: ScanPayload):
+    scanned_uid = payload.rfid_uid.strip().upper()
+    product = query_db("SELECT * FROM products WHERE UPPER(rfid_uid) = ?", (scanned_uid,), one=True)
+
+    if not product:
+        return {"status": "unmatched", "scanned_uid": scanned_uid}
+
+    # Determine action: First scan -> Check-In (+1), Second scan -> Check-Out (-1)
+    last_state = rfid_scan_states.get(scanned_uid, "OUT")
+
+    if last_state == "OUT":
+        # First scan: Item entering warehouse (Check-In)
+        new_stock = product["stock"] + 1
+        action = "CHECK_IN"
+        status_msg = "Item checked into warehouse"
+        rfid_scan_states[scanned_uid] = "IN"
+    else:
+        # Second scan: Item leaving warehouse (Check-Out)
+        new_stock = max(0, product["stock"] - 1)
+        action = "CHECK_OUT"
+        status_msg = "Item dispatched from warehouse"
+        rfid_scan_states[scanned_uid] = "OUT"
+
+    # Update database stock
+    query_db("UPDATE products SET stock = ? WHERE id = ?", (new_stock, product["id"]), commit=True)
+
+    # Broadcast update to all connected frontend screens
+    await manager.broadcast({
+        "event": "live_scan",
+        "action": action,
+        "scanned_uid": scanned_uid,
+        "matched_product": product["name"],
+        "new_stock": new_stock,
+        "message": status_msg
+    })
+
+    return {
+        "status": "matched",
+        "action": action,
+        "scanned_uid": scanned_uid,
+        "product_name": product["name"],
+        "new_stock": new_stock,
+        "message": status_msg
+    }
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
