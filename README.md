@@ -164,7 +164,7 @@ http://localhost:8000/admin.html
 
 *Customer Storefront:*
 
-text
+type in any browser -
 http://localhost:8000/index.html
 
 
