@@ -1,423 +1,281 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Royal Teak Furniture Co. - Storefront</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <style>
-    input[type='number']::-webkit-inner-spin-button,
-    input[type='number']::-webkit-outer-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Furniture Store - Customer Catalog</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans antialiased">
+<body class="bg-gray-50 text-gray-800 font-sans min-h-screen flex flex-col">
 
-  <header class="bg-white border-b border-gray-200 sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-      <div class="flex items-center space-x-3">
-        <div class="p-2 bg-blue-600 text-white rounded-xl">
-          <i class="fa-solid fa-couch text-xl"></i>
+    <!-- Header Navigation -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 text-white p-2 rounded-lg">
+                    <i class="fa-solid fa-couch text-xl"></i>
+                </div>
+                <span class="text-xl font-bold text-gray-900 tracking-tight">Luxe Furniture</span>
+            </div>
+            
+            <div class="flex items-center gap-4 text-xs font-medium text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-200">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                Live Inventory Sync Active
+            </div>
         </div>
-        <div>
-          <h1 class="text-xl font-bold text-gray-900 leading-tight">Royal Teak</h1>
-          <p class="text-[10px] text-gray-500 font-medium tracking-wide uppercase">Fine Furniture Store</p>
+    </header>
+
+    <!-- Hero Banner -->
+    <section class="bg-slate-900 text-white py-12 px-6">
+        <div class="max-w-7xl mx-auto text-center">
+            <h1 class="text-3xl md:text-4xl font-extrabold mb-3">Modern Comfort for Every Room</h1>
+            <p class="text-slate-400 text-sm max-w-xl mx-auto">Explore our live RFID-tracked furniture catalog. Real-time availability updated instantly as items are scanned in our warehouse.</p>
         </div>
-      </div>
-
-      <div class="hidden md:flex flex-1 max-w-md mx-8 relative">
-        <input type="text" id="search-input" onkeyup="filterProducts()" placeholder="Search tables, chairs, sofas..." class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 bg-gray-50" />
-        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-gray-400 text-sm"></i>
-      </div>
-
-      <button onclick="toggleCartDrawer()" class="relative p-2.5 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl transition flex items-center space-x-2">
-        <i class="fa-solid fa-bag-shopping text-lg"></i>
-        <span class="text-xs font-bold hidden sm:inline">Cart</span>
-        <span id="cart-count" class="bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
-      </button>
-    </div>
-  </header>
-
-  <section class="bg-slate-900 text-white py-12 px-6">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
-      <div class="max-w-lg">
-        <span class="text-xs font-semibold uppercase tracking-widest text-blue-400">Smart RFID Connected Inventory</span>
-        <h2 class="text-3xl sm:text-4xl font-extrabold mt-2 leading-tight">Handcrafted Furniture for Modern Living</h2>
-        <p class="text-slate-400 text-sm mt-3">Browse our live catalog updated in real time directly from our local warehouse.</p>
-      </div>
-    </div>
-  </section>
-
-  <main class="max-w-7xl mx-auto px-6 py-10 flex flex-col lg:flex-row gap-8">
-    <aside class="w-full lg:w-64 shrink-0 space-y-6">
-      <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm space-y-5">
-        <div class="flex justify-between items-center border-b pb-3">
-          <h3 class="font-bold text-gray-900 text-base">Filter Catalog</h3>
-          <button onclick="resetFilters()" class="text-xs text-blue-600 hover:underline font-semibold">Reset</button>
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold uppercase text-gray-400 mb-2">Functional</label>
-          <select id="filter-functional" onchange="filterProducts()" class="w-full p-2 border border-gray-200 rounded-lg text-sm bg-gray-50 focus:outline-none">
-            <option value="All" selected>All Categories</option>
-            <option value="Seating">Seating</option>
-            <option value="Tables">Tables</option>
-            <option value="Beds">Beds</option>
-            <option value="Storage">Storage</option>
-            <option value="Desks">Desks</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold uppercase text-gray-400 mb-2">Room</label>
-          <select id="filter-room" onchange="filterProducts()" class="w-full p-2 border border-gray-200 rounded-lg text-sm bg-gray-50 focus:outline-none">
-            <option value="All" selected>All Rooms</option>
-            <option value="Living Room">Living Room</option>
-            <option value="Bedroom">Bedroom</option>
-            <option value="Dining Room">Dining Room</option>
-            <option value="Home Office">Home Office</option>
-            <option value="Outdoor">Outdoor</option>
-            <option value="Kids Room">Kids Room</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold uppercase text-gray-400 mb-2">Material</label>
-          <select id="filter-material" onchange="filterProducts()" class="w-full p-2 border border-gray-200 rounded-lg text-sm bg-gray-50 focus:outline-none">
-            <option value="All" selected>All Materials</option>
-            <option value="Wooden">Wooden</option>
-            <option value="Metal">Metal</option>
-            <option value="Upholstered">Upholstered</option>
-            <option value="Plastic">Plastic</option>
-            <option value="Wicker & Rattan">Wicker & Rattan</option>
-          </select>
-        </div>
-      </div>
-    </aside>
-
-    <section class="flex-1">
-      <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
     </section>
-  </main>
 
-  <div id="cart-drawer" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex justify-end">
-    <div class="bg-white w-full max-w-md h-full shadow-2xl flex flex-col justify-between p-6">
-      <div>
-        <div class="flex justify-between items-center pb-4 border-b">
-          <h3 class="text-lg font-bold text-gray-900">Your Shopping Cart</h3>
-          <button onclick="toggleCartDrawer()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+    <!-- Main Store Catalog -->
+    <main class="max-w-7xl mx-auto px-6 py-10 flex-1 w-full">
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="text-xl font-bold text-gray-900">Available Products</h2>
+            <span id="productCountBadge" class="text-xs bg-gray-200 text-gray-700 px-3 py-1 rounded-full font-semibold">0 Items</span>
         </div>
 
-        <div id="cart-items" class="py-4 space-y-4 max-h-[60vh] overflow-y-auto"></div>
-      </div>
-
-      <div class="border-t pt-4 space-y-3">
-        <div class="flex justify-between items-center text-gray-800">
-          <span class="font-semibold">Subtotal</span>
-          <span id="cart-subtotal" class="font-bold text-lg">₹0</span>
+        <!-- Product Grid -->
+        <div id="catalogGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Dynamically populated via JS -->
         </div>
-        <button onclick="openPaymentModal()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center space-x-2">
-          <span>Proceed to Checkout</span>
-          <i class="fa-solid fa-arrow-right text-xs"></i>
-        </button>
-      </div>
-    </div>
-  </div>
+    </main>
 
-  <div id="payment-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 border border-gray-100 space-y-5">
-      <div class="flex justify-between items-center pb-3 border-b">
-        <div>
-          <h3 class="text-lg font-bold text-gray-900">Select Payment Method</h3>
-          <p class="text-xs text-gray-500">Total Payable: <span id="payment-total-amount" class="font-bold text-blue-600">₹0</span></p>
-        </div>
-        <button onclick="closePaymentModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
-      </div>
-
-      <form onsubmit="handlePaymentSubmit(event)" class="space-y-4">
-        <div>
-          <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Your Full Name</label>
-          <input type="text" id="cust-name" required placeholder="e.g. Joel Paul" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500" />
-        </div>
-
-        <div class="space-y-2">
-          <label class="flex items-center justify-between p-3 border border-gray-200 rounded-xl cursor-pointer hover:border-blue-500 transition">
-            <div class="flex items-center space-x-3">
-              <input type="radio" name="payment_method" value="Google Pay" checked class="text-blue-600 focus:ring-blue-500" />
-              <span class="text-sm font-semibold text-gray-800">Google Pay</span>
-            </div>
-            <i class="fa-brands fa-google text-blue-500 text-lg"></i>
-          </label>
-
-          <label class="flex items-center justify-between p-3 border border-gray-200 rounded-xl cursor-pointer hover:border-blue-500 transition">
-            <div class="flex items-center space-x-3">
-              <input type="radio" name="payment_method" value="PhonePe" class="text-blue-600 focus:ring-blue-500" />
-              <span class="text-sm font-semibold text-gray-800">PhonePe</span>
-            </div>
-            <i class="fa-solid fa-mobile-screen-button text-purple-600 text-lg"></i>
-          </label>
-
-          <label class="flex items-center justify-between p-3 border border-gray-200 rounded-xl cursor-pointer hover:border-blue-500 transition">
-            <div class="flex items-center space-x-3">
-              <input type="radio" name="payment_method" value="UPI ID" class="text-blue-600 focus:ring-blue-500" />
-              <span class="text-sm font-semibold text-gray-800">UPI ID / VPA</span>
-            </div>
-            <i class="fa-solid fa-qrcode text-emerald-600 text-lg"></i>
-          </label>
-
-          <label class="flex items-center justify-between p-3 border border-gray-200 rounded-xl cursor-pointer hover:border-blue-500 transition">
-            <div class="flex items-center space-x-3">
-              <input type="radio" name="payment_method" value="Cash on Delivery" class="text-blue-600 focus:ring-blue-500" />
-              <span class="text-sm font-semibold text-gray-800">Cash on Delivery (COD)</span>
-            </div>
-            <i class="fa-solid fa-money-bill-wave text-amber-600 text-lg"></i>
-          </label>
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">UPI ID or Mobile Number</label>
-          <input type="text" required placeholder="e.g. 9876543210@paytm or user@upi" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500" />
-        </div>
-
-        <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center space-x-2">
-          <i class="fa-solid fa-lock text-xs"></i>
-          <span>Pay & Confirm Order</span>
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <script>
-    let catalog = [];
-    let cart = [];
-    const API_BASE = "http://192.168.0.163:8000";
-
-    async function fetchCatalog() {
-      try {
-        const response = await fetch(`${API_BASE}/api/products`);
-        if (response.ok) {
-          const rawData = await response.json();
-          catalog = rawData.map(item => ({
-            id: String(item.id),
-            name: item.name,
-            functional: item.functional || "Seating",
-            room: item.room || "Living Room",
-            material: item.material || "Wooden",
-            price: item.price,
-            stock: item.stock !== undefined ? item.stock : 0,
-            image: item.image_url || item.image || "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400"
-          }));
-          filterProducts();
-        }
-      } catch (error) {
-        console.error("Backend offline:", error);
-      }
-    }
-
-    function connectWebSocket() {
-  // Extract host/IP directly from API_BASE
-  const host = API_BASE.replace(/^https?:\/\//, '').split('/')[0];
-  const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-  const ws = new WebSocket(`${wsProtocol}//${host}/ws`);
-
-  ws.onopen = () => console.log("WebSocket Connected to " + host);
-
-  ws.onmessage = (event) => {
-    const message = JSON.parse(event.data);
-    if (message.event === "inventory_updated" || message.event === "order_created" || message.event === "live_scan") {
-      fetchCatalog();
-    }
-  };
-
-  ws.onclose = () => setTimeout(connectWebSocket, 3000);
-}
-
-    function renderGrid(products) {
-      const grid = document.getElementById("product-grid");
-      if (!grid) return;
-
-      if (products.length === 0) {
-        grid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-400"><p>No products found matching your filters.</p></div>`;
-        return;
-      }
-
-      grid.innerHTML = products.map(item => `
-        <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col justify-between">
-          <div>
-            <img src="${item.image}" class="w-full h-48 object-cover" />
-            <div class="p-5">
-              <div class="flex flex-wrap gap-1 mb-2">
-                <span class="px-2 py-0.5 text-[10px] bg-blue-50 text-blue-600 font-semibold rounded">${item.functional}</span>
-                <span class="px-2 py-0.5 text-[10px] bg-emerald-50 text-emerald-600 font-semibold rounded">${item.room}</span>
-                <span class="px-2 py-0.5 text-[10px] ${item.stock > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'} font-bold rounded">Stock: ${item.stock}</span>
-              </div>
-              <h3 class="font-bold text-gray-900 text-base mb-1">${item.name}</h3>
-              <p class="text-xs text-gray-500 mb-3">${item.material} Craftsmanship</p>
-              <p class="text-xl font-extrabold text-gray-900">₹${Number(item.price).toLocaleString('en-IN')}</p>
-            </div>
-          </div>
-          
-          <div class="p-5 pt-0">
-            <button onclick="addToCart('${item.id}')" ${item.stock === 0 ? 'disabled' : ''} class="w-full py-2.5 px-4 rounded-xl font-bold text-xs transition flex items-center justify-center space-x-2 ${
-              item.stock > 0 ? 'bg-slate-900 hover:bg-blue-600 text-white' : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-            }">
-              <i class="fa-solid fa-cart-plus"></i>
-              <span>${item.stock > 0 ? 'Add to Cart' : 'Out of Stock'}</span>
+    <!-- Order & Payment Modal -->
+    <div id="orderModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeOrderModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i class="fa-solid fa-xmark text-lg"></i>
             </button>
-          </div>
+            <h3 class="text-lg font-bold text-gray-900 mb-4">Complete Your Order</h3>
+
+            <form id="orderForm" onsubmit="handleOrderSubmit(event)" class="space-y-4">
+                <input type="hidden" id="orderProductId">
+                <input type="hidden" id="orderProductName">
+                <input type="hidden" id="orderProductPrice">
+
+                <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 text-sm">
+                    <div id="summaryProductName" class="font-bold text-gray-900"></div>
+                    <div id="summaryProductPrice" class="text-blue-600 font-semibold mt-1"></div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Your Full Name</label>
+                    <input type="text" id="customerNameInput" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="e.g. Rahul Sharma">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Sales Channel</label>
+                    <select id="channelInput" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        <option value="Online Store">Online Store</option>
+                        <option value="Showroom">Showroom</option>
+                    </select>
+                </div>
+
+                <!-- Payment Selection Section -->
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-gray-500 mb-2">Select Payment Method</label>
+                    <div class="grid grid-cols-2 gap-2 mb-3">
+                        <label class="border border-gray-200 rounded-lg p-2.5 flex items-center gap-2 cursor-pointer hover:bg-blue-50/50 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50/50 transition">
+                            <input type="radio" name="paymentMethod" value="gpay" checked onclick="togglePaymentView('gpay')" class="text-blue-600">
+                            <span class="text-xs font-semibold text-gray-700"><i class="fa-brands fa-google-pay text-base text-blue-600"></i> Google Pay</span>
+                        </label>
+                        <label class="border border-gray-200 rounded-lg p-2.5 flex items-center gap-2 cursor-pointer hover:bg-blue-50/50 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50/50 transition">
+                            <input type="radio" name="paymentMethod" value="phonepe" onclick="togglePaymentView('phonepe')" class="text-blue-600">
+                            <span class="text-xs font-semibold text-gray-700"><i class="fa-solid fa-mobile-screen-button text-purple-600"></i> PhonePe</span>
+                        </label>
+                        <label class="border border-gray-200 rounded-lg p-2.5 flex items-center gap-2 cursor-pointer hover:bg-blue-50/50 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50/50 transition">
+                            <input type="radio" name="paymentMethod" value="paytm" onclick="togglePaymentView('paytm')" class="text-blue-600">
+                            <span class="text-xs font-semibold text-gray-700"><i class="fa-solid fa-wallet text-sky-500"></i> Paytm UPI</span>
+                        </label>
+                        <label class="border border-gray-200 rounded-lg p-2.5 flex items-center gap-2 cursor-pointer hover:bg-blue-50/50 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50/50 transition">
+                            <input type="radio" name="paymentMethod" value="qr" onclick="togglePaymentView('qr')" class="text-blue-600">
+                            <span class="text-xs font-semibold text-gray-700"><i class="fa-solid fa-qrcode text-gray-700"></i> UPI QR Code</span>
+                        </label>
+                    </div>
+
+                    <!-- App UPI ID View -->
+                    <div id="upiInputContainer" class="space-y-1">
+                        <label class="block text-[11px] text-gray-400">Enter UPI ID / VPA</label>
+                        <input type="text" id="upiIdInput" class="w-full border border-gray-300 rounded-lg p-2 text-xs font-mono focus:ring-2 focus:ring-blue-500 outline-none" placeholder="username@upi">
+                    </div>
+
+                    <!-- Dynamic QR Code View -->
+                    <div id="qrContainer" class="hidden text-center p-3 border border-gray-200 rounded-xl bg-gray-50/80">
+                        <p class="text-xs font-semibold text-gray-600 mb-2">Scan QR code using Google Pay / PhonePe / Paytm</p>
+                        <img id="qrCodeImg" class="w-36 h-36 mx-auto rounded-lg border border-gray-200 shadow-xs" src="" alt="Payment QR">
+                        <div class="text-[10px] text-gray-400 mt-2 font-mono">UPI ID: merchant@paytm</div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                    <button type="button" onclick="closeOrderModal()" class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg">Cancel</button>
+                    <button type="submit" class="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium shadow-sm">Confirm Purchase</button>
+                </div>
+            </form>
         </div>
-      `).join('');
-    }
+    </div>
 
-    function filterProducts() {
-      const search = document.getElementById('search-input') ? document.getElementById('search-input').value.toLowerCase() : '';
-      const functional = document.getElementById('filter-functional') ? document.getElementById('filter-functional').value : 'All';
-      const room = document.getElementById('filter-room') ? document.getElementById('filter-room').value : 'All';
-      const material = document.getElementById('filter-material') ? document.getElementById('filter-material').value : 'All';
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 py-6 text-center text-xs text-gray-400">
+        &copy; 2026 Luxe Furniture Platform. Powered by ESP32 RFID Edge Gateway.
+    </footer>
 
-      const filtered = catalog.filter(item => {
-        const matchesSearch = item.name.toLowerCase().includes(search);
-        const matchesFunc = functional === 'All' || item.functional === functional;
-        const matchesRoom = room === 'All' || item.room === room;
-        const matchesMat = material === 'All' || item.material === material;
-        return matchesSearch && matchesFunc && matchesRoom && matchesMat;
-      });
+    <script>
+        const host = window.location.hostname || 'localhost';
+        const port = window.location.port ? `:${window.location.port}` : ':8000';
+        const API_BASE = window.location.protocol.startsWith('http') 
+            ? `${window.location.protocol}//${host}${port}` 
+            : 'http://localhost:8000';
+            
+        const WS_URL = window.location.protocol === 'https:' 
+            ? `wss://${host}${port}/ws` 
+            : `ws://${host}${port}/ws`;
 
-      renderGrid(filtered);
-    }
+        let products = [];
 
-    function resetFilters() {
-      if (document.getElementById('search-input')) document.getElementById('search-input').value = '';
-      if (document.getElementById('filter-functional')) document.getElementById('filter-functional').value = 'All';
-      if (document.getElementById('filter-room')) document.getElementById('filter-room').value = 'All';
-      if (document.getElementById('filter-material')) document.getElementById('filter-material').value = 'All';
-      renderGrid(catalog);
-    }
-
-    function addToCart(id) {
-      const item = catalog.find(p => String(p.id) === String(id));
-      if (!item || item.stock === 0) return;
-
-      const existing = cart.find(c => String(c.id) === String(id));
-      if (existing) {
-        if (existing.qty < item.stock) existing.qty++;
-      } else {
-        cart.push({ ...item, qty: 1 });
-      }
-
-      updateCart();
-      toggleCartDrawer();
-    }
-
-    function changeCartQty(index, delta) {
-      const item = cart[index];
-      const stockLimit = catalog.find(p => String(p.id) === String(item.id))?.stock || 1;
-
-      item.qty += delta;
-      if (item.qty > stockLimit) item.qty = stockLimit;
-      if (item.qty <= 0) cart.splice(index, 1);
-      updateCart();
-    }
-
-    function updateCart() {
-      const totalCount = cart.reduce((sum, item) => sum + item.qty, 0);
-      document.getElementById("cart-count").innerText = totalCount;
-      const cartContainer = document.getElementById("cart-items");
-      
-      if (cart.length === 0) {
-        cartContainer.innerHTML = `<p class="text-xs text-gray-400 text-center py-6">Your cart is empty.</p>`;
-        document.getElementById("cart-subtotal").innerText = "₹0";
-        return;
-      }
-
-      let subtotal = 0;
-      cartContainer.innerHTML = cart.map((item, idx) => {
-        const itemTotal = item.price * item.qty;
-        subtotal += itemTotal;
-        return `
-          <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-100">
-            <div class="flex items-center space-x-3">
-              <img src="${item.image}" class="w-12 h-12 object-cover rounded-lg" />
-              <div>
-                <p class="font-bold text-xs text-gray-800">${item.name}</p>
-                <p class="text-xs text-gray-500 font-semibold">₹${Number(item.price).toLocaleString('en-IN')}</p>
-              </div>
-            </div>
-
-            <div class="flex items-center space-x-2">
-              <div class="inline-flex items-center space-x-1 border border-gray-200 rounded-lg bg-white p-1">
-                <button onclick="changeCartQty(${idx}, -1)" class="w-5 h-5 rounded bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs flex items-center justify-center">-</button>
-                <span class="w-6 text-center text-xs font-bold text-gray-800">${item.qty}</span>
-                <button onclick="changeCartQty(${idx}, 1)" class="w-5 h-5 rounded bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs flex items-center justify-center">+</button>
-              </div>
-              <button onclick="removeFromCart(${idx})" class="text-red-400 hover:text-red-600 text-xs pl-1"><i class="fa-solid fa-trash"></i></button>
-            </div>
-          </div>
-        `;
-      }).join('');
-
-      document.getElementById("cart-subtotal").innerText = `₹${subtotal.toLocaleString('en-IN')}`;
-    }
-
-    function removeFromCart(index) {
-      cart.splice(index, 1);
-      updateCart();
-    }
-
-    function toggleCartDrawer() {
-      document.getElementById("cart-drawer").classList.toggle("hidden");
-    }
-
-    function openPaymentModal() {
-      if (cart.length === 0) return alert("Your cart is empty!");
-      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-      document.getElementById("payment-total-amount").innerText = `₹${subtotal.toLocaleString('en-IN')}`;
-      document.getElementById("payment-modal").classList.remove("hidden");
-    }
-
-    function closePaymentModal() {
-      document.getElementById("payment-modal").classList.add("hidden");
-    }
-
-    async function handlePaymentSubmit(event) {
-      event.preventDefault();
-      const selectedMethod = document.querySelector('input[name="payment_method"]:checked').value;
-      const customerName = document.getElementById('cust-name').value.trim() || "Online Customer";
-
-      for (const item of cart) {
-        const orderPayload = {
-          channel: `Online Store (${selectedMethod})`,
-          customer: customerName,
-          productId: String(item.id),
-          productName: item.name,
-          amount: item.price * item.qty,
-          quantity: item.qty
-        };
-
-        try {
-          await fetch(`${API_BASE}/api/orders`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(orderPayload)
-          });
-        } catch (err) {
-          console.error("Error creating order:", err);
+        async function fetchProducts() {
+            try {
+                const res = await fetch(`${API_BASE}/api/products`);
+                products = await res.json();
+                renderCatalog();
+            } catch (err) {
+                console.error("Failed to load products for customer portal:", err);
+            }
         }
-      }
 
-      alert(`Payment Successful! Thank you ${customerName}. Your order has been placed.`);
-      cart = [];
-      updateCart();
-      closePaymentModal();
-      toggleCartDrawer();
-      fetchCatalog();
-    }
+        function renderCatalog() {
+            const grid = document.getElementById('catalogGrid');
+            grid.innerHTML = '';
 
-    fetchCatalog();
-    connectWebSocket();
-  </script>
+            document.getElementById('productCountBadge').innerText = `${products.length} Items`;
+
+            if (products.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12 text-gray-400">
+                        <i class="fa-solid fa-box-open text-4xl mb-3"></i>
+                        <p>No products available in the catalog right now.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            products.forEach(p => {
+                const inStock = p.stock > 0;
+
+                grid.innerHTML += `
+                    <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col justify-between">
+                        <div>
+                            <div class="relative h-48 bg-gray-100">
+                                <img src="${p.image_url}" class="w-full h-full object-cover">
+                                <span class="absolute top-3 right-3 text-[11px] font-bold px-2.5 py-1 rounded-full ${inStock ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
+                                    ${inStock ? `${p.stock} In Stock` : 'Out of Stock'}
+                                </span>
+                            </div>
+                            <div class="p-5">
+                                <div class="text-xs text-blue-600 font-semibold mb-1">${p.functional || 'Seating'} • ${p.room || 'Living Room'}</div>
+                                <h3 class="font-bold text-gray-900 text-base mb-2">${p.name}</h3>
+                                <div class="text-lg font-extrabold text-gray-900 mb-4">₹ ${p.price.toLocaleString('en-IN')}</div>
+                            </div>
+                        </div>
+                        <div class="px-5 pb-5 pt-0">
+                            <button 
+                                onclick="openOrderModal(${p.id})" 
+                                ${!inStock ? 'disabled' : ''} 
+                                class="w-full py-2.5 rounded-lg text-sm font-medium transition ${inStock ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}">
+                                ${inStock ? 'Buy Now' : 'Sold Out'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function togglePaymentView(method) {
+            const upiContainer = document.getElementById('upiInputContainer');
+            const qrContainer = document.getElementById('qrContainer');
+            const price = document.getElementById('orderProductPrice').value || '100';
+
+            if (method === 'qr') {
+                upiContainer.classList.add('hidden');
+                qrContainer.classList.remove('hidden');
+                
+                // Generates dynamic UPI QR Code
+                const upiString = `upi://pay?pa=merchant@paytm&pn=LuxeFurniture&am=${price}&cu=INR`;
+                document.getElementById('qrCodeImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiString)}`;
+            } else {
+                qrContainer.classList.add('hidden');
+                upiContainer.classList.remove('hidden');
+            }
+        }
+
+        function openOrderModal(productId) {
+            const p = products.find(prod => prod.id === productId);
+            if (!p || p.stock <= 0) return;
+
+            document.getElementById('orderProductId').value = p.id;
+            document.getElementById('orderProductName').value = p.name;
+            document.getElementById('orderProductPrice').value = p.price;
+
+            document.getElementById('summaryProductName').innerText = p.name;
+            document.getElementById('summaryProductPrice').innerText = `₹ ${p.price.toLocaleString('en-IN')}`;
+
+            togglePaymentView('gpay');
+            document.getElementById('orderModal').classList.remove('hidden');
+        }
+
+        function closeOrderModal() {
+            document.getElementById('orderModal').classList.add('hidden');
+        }
+
+        async function handleOrderSubmit(e) {
+            e.preventDefault();
+
+            const payload = {
+                channel: document.getElementById('channelInput').value,
+                customer: document.getElementById('customerNameInput').value,
+                productId: document.getElementById('orderProductId').value,
+                productName: document.getElementById('orderProductName').value,
+                amount: parseFloat(document.getElementById('orderProductPrice').value),
+                quantity: 1
+            };
+
+            try {
+                await fetch(`${API_BASE}/api/orders`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                closeOrderModal();
+                alert("Payment verified & Order placed successfully!");
+                fetchProducts();
+            } catch (err) {
+                console.error("Failed to place order:", err);
+            }
+        }
+
+        function setupWebSocket() {
+            const ws = new WebSocket(WS_URL);
+
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                if (data.event === 'live_scan' || data.event === 'inventory_updated' || data.event === 'order_created') {
+                    fetchProducts();
+                }
+            };
+
+            ws.onclose = () => setTimeout(setupWebSocket, 3000);
+        }
+
+        fetchProducts();
+        setupWebSocket();
+    </script>
 </body>
 </html>
