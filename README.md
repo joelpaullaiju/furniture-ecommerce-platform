@@ -158,7 +158,7 @@ Open your browser and visit the following addresses.
 
 *Admin Control Panel:*
 
-text
+type in any browser -
 http://localhost:8000/admin.html
 
 
