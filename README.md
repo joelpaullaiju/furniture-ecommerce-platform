@@ -1,15 +1,30 @@
 # Smart Furniture Store Management & E-Commerce Platform
 
-An edge-to-cloud IoT inventory automation system integrating ESP32 RFID gate nodes, a FastAPI backend, and real-time cloud data synchronization.
+An IoT-enabled inventory automation system featuring real-time RFID tracking using an ESP32 edge gateway, a FastAPI backend, dynamic SQLite database, WebSockets live synchronization, and interactive customer & admin web dashboards.
 
-## Architecture
-- **Edge Layer:** ESP32 + RC522 (13.56 MHz RFID transceiver)
-- **Backend:** FastAPI (Python 3.x)
-- **Database:** Firebase Realtime Database
-- **Storefront & Admin:** Web UI for live stock visibility
+---
 
-## Project Structure
-- `firmware/`: Embedded C++ code for the ESP32 reader nodes
-- `backend/`: REST API routes, models, and cloud synchronization logic
-- `web/`: Admin management dashboard and e-commerce customer portal
-- `docs/`: Technical specifications, architecture schematics, and reports
+## 🏗️ System Architecture
+
+* **Hardware / Edge Layer**: ESP32 Dev Module + MFRC522 RFID Transceiver (13.56 MHz). Operates as a Wi-Fi Access Point (`Furniture_Demo_Net`) and dispatches card UID HTTP requests.
+* **Backend Layer**: FastAPI (Python 3.x) with WebSockets for real-time bidirectional communication and automated order fulfillment logic.
+* **Database Layer**: SQLite (`furniture.db`) for lightweight local data storage (products, stock levels, order logs).
+* **Frontend Layer**: Responsive HTML5 + Tailwind CSS web interfaces for both the Public Storefront (`index.html`) and the Admin Control Panel (`admin.html`).
+
+---
+
+## 📁 Project Structure
+
+```text
+furniture-ecommerce-platform/
+├── backend/
+│   └── app/
+│       └── main.py              # FastAPI server, WebSockets & REST API routes
+├── frontend/
+│   ├── index.html               # Customer store with UPI/QR payment options
+│   └── admin.html               # Admin dashboard (Listings, Orders, Multi-Tag RFID)
+├── firmware/
+│   └── src/
+│       └── main.cpp             # ESP32 C++ firmware for MFRC522 RFID reader
+├── furniture.db                 # Auto-generated SQLite database
+└── README.md                    # Project documentation
