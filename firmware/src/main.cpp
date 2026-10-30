@@ -16,7 +16,7 @@ const char* ap_ssid = "Furniture_Demo_Net";
 const char* ap_password = "password123";
 
 // --- BACKEND API ENDPOINT ---
-const char* serverUrl = "http://192.168.4.2:8000/api/scan";
+const char* serverUrl = "http://your_ip:8000/api/scan";
 
 // Scan cooldown to prevent duplicate rapid triggers
 unsigned long lastScanTime = 0;
