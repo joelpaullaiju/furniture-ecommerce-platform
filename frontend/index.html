@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Furniture Store - Customer Catalog</title>
     <link rel="stylesheet" href="tailwind.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans min-h-screen flex flex-col">
 
@@ -16,7 +16,7 @@
                 <div class="bg-blue-600 text-white p-2 rounded-lg">
                     <i class="fa-solid fa-couch text-xl"></i>
                 </div>
-                <span class="text-xl font-bold text-gray-900 tracking-tight">Luxe Furniture</span>
+                <span class="text-xl font-bold text-gray-900 tracking-tight">Royal Teak</span>
             </div>
             
             <div class="flex items-center gap-4 text-xs font-medium text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-200">
@@ -26,256 +26,33 @@
         </div>
     </header>
 
-    <!-- Hero Banner -->
-    <section class="bg-slate-900 text-white py-12 px-6">
+    <!-- Hero Banner (Fixed Dark High-Contrast Style) -->
+    <section class="bg-gray-800 text-white py-10 px-6 rounded-lg my-6 mx-6 shadow-md">
         <div class="max-w-7xl mx-auto text-center">
-            <h1 class="text-3xl md:text-4xl font-extrabold mb-3">Modern Comfort for Every Room</h1>
-            <p class="text-slate-400 text-sm max-w-xl mx-auto">Explore our live RFID-tracked furniture catalog. Real-time availability updated instantly as items are scanned in our warehouse.</p>
+            <h1 class="text-3xl font-extrabold text-white mb-2">Modern Comfort for Every Room</h1>
+            <p class="text-gray-300 text-sm max-w-2xl mx-auto">Explore our live RFID-tracked furniture catalog. Real-time availability updated instantly as items are scanned in our warehouse.</p>
         </div>
     </section>
 
-    <!-- Main Store Catalog -->
-    <main class="max-w-7xl mx-auto px-6 py-10 flex-1 w-full">
-        <div class="flex justify-between items-center mb-8">
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-6 pb-12 flex-grow w-full">
+        <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-bold text-gray-900">Available Products</h2>
-            <span id="productCountBadge" class="text-xs bg-gray-200 text-gray-700 px-3 py-1 rounded-full font-semibold">0 Items</span>
+            <span id="product-count" class="text-xs bg-gray-200 text-gray-700 px-2.5 py-1 rounded-full font-medium">0 Items</span>
         </div>
 
         <!-- Product Grid -->
-        <div id="catalogGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            <!-- Dynamically populated via JS -->
+        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Dynamic products will be injected here by main.js -->
         </div>
     </main>
 
-    <!-- Order & Payment Modal -->
-    <div id="orderModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl relative max-h-[90vh] overflow-y-auto">
-            <button onclick="closeOrderModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
-            <h3 class="text-lg font-bold text-gray-900 mb-4">Complete Your Order</h3>
-
-            <form id="orderForm" onsubmit="handleOrderSubmit(event)" class="space-y-4">
-                <input type="hidden" id="orderProductId">
-                <input type="hidden" id="orderProductName">
-                <input type="hidden" id="orderProductPrice">
-
-                <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 text-sm">
-                    <div id="summaryProductName" class="font-bold text-gray-900"></div>
-                    <div id="summaryProductPrice" class="text-blue-600 font-semibold mt-1"></div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Your Full Name</label>
-                    <input type="text" id="customerNameInput" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="e.g. Rahul Sharma">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Sales Channel</label>
-                    <select id="channelInput" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                        <option value="Online Store">Online Store</option>
-                        <option value="Showroom">Showroom</option>
-                    </select>
-                </div>
-
-                <!-- Payment Selection Section -->
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-500 mb-2">Select Payment Method</label>
-                    <div class="grid grid-cols-2 gap-2 mb-3">
-                        <label class="border border-gray-200 rounded-lg p-2.5 flex items-center gap-2 cursor-pointer hover:bg-blue-50/50 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50/50 transition">
-                            <input type="radio" name="paymentMethod" value="gpay" checked onclick="togglePaymentView('gpay')" class="text-blue-600">
-                            <span class="text-xs font-semibold text-gray-700"><i class="fa-brands fa-google-pay text-base text-blue-600"></i> Google Pay</span>
-                        </label>
-                        <label class="border border-gray-200 rounded-lg p-2.5 flex items-center gap-2 cursor-pointer hover:bg-blue-50/50 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50/50 transition">
-                            <input type="radio" name="paymentMethod" value="phonepe" onclick="togglePaymentView('phonepe')" class="text-blue-600">
-                            <span class="text-xs font-semibold text-gray-700"><i class="fa-solid fa-mobile-screen-button text-purple-600"></i> PhonePe</span>
-                        </label>
-                        <label class="border border-gray-200 rounded-lg p-2.5 flex items-center gap-2 cursor-pointer hover:bg-blue-50/50 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50/50 transition">
-                            <input type="radio" name="paymentMethod" value="paytm" onclick="togglePaymentView('paytm')" class="text-blue-600">
-                            <span class="text-xs font-semibold text-gray-700"><i class="fa-solid fa-wallet text-sky-500"></i> Paytm UPI</span>
-                        </label>
-                        <label class="border border-gray-200 rounded-lg p-2.5 flex items-center gap-2 cursor-pointer hover:bg-blue-50/50 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50/50 transition">
-                            <input type="radio" name="paymentMethod" value="qr" onclick="togglePaymentView('qr')" class="text-blue-600">
-                            <span class="text-xs font-semibold text-gray-700"><i class="fa-solid fa-qrcode text-gray-700"></i> UPI QR Code</span>
-                        </label>
-                    </div>
-
-                    <!-- App UPI ID View -->
-                    <div id="upiInputContainer" class="space-y-1">
-                        <label class="block text-[11px] text-gray-400">Enter UPI ID / VPA</label>
-                        <input type="text" id="upiIdInput" class="w-full border border-gray-300 rounded-lg p-2 text-xs font-mono focus:ring-2 focus:ring-blue-500 outline-none" placeholder="username@upi">
-                    </div>
-
-                    <!-- Dynamic QR Code View -->
-                    <div id="qrContainer" class="hidden text-center p-3 border border-gray-200 rounded-xl bg-gray-50/80">
-                        <p class="text-xs font-semibold text-gray-600 mb-2">Scan QR code using Google Pay / PhonePe / Paytm</p>
-                        <img id="qrCodeImg" class="w-36 h-36 mx-auto rounded-lg border border-gray-200 shadow-xs" src="" alt="Payment QR">
-                        <div class="text-[10px] text-gray-400 mt-2 font-mono">UPI ID: merchant@paytm</div>
-                    </div>
-                </div>
-
-                <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
-                    <button type="button" onclick="closeOrderModal()" class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg">Cancel</button>
-                    <button type="submit" class="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium shadow-sm">Confirm Purchase</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200 py-6 text-center text-xs text-gray-400">
-        &copy; 2026 Luxe Furniture Platform. Powered by ESP32 RFID Edge Gateway.
+    <footer class="bg-white border-t border-gray-200 py-6 text-center text-xs text-gray-500">
+        <p>&copy; 2026 Royal Teak Platform. Powered by ESP32 RFID Edge Gateway.</p>
     </footer>
 
-    <script>
-        const host = window.location.hostname || 'localhost';
-        const port = window.location.port ? `:${window.location.port}` : ':8000';
-        const API_BASE = window.location.protocol.startsWith('http') 
-            ? `${window.location.protocol}//${host}${port}` 
-            : 'http://localhost:8000';
-            
-        const WS_URL = window.location.protocol === 'https:' 
-            ? `wss://${host}${port}/ws` 
-            : `ws://${host}${port}/ws`;
-
-        let products = [];
-
-        async function fetchProducts() {
-            try {
-                const res = await fetch(`${API_BASE}/api/products`);
-                products = await res.json();
-                renderCatalog();
-            } catch (err) {
-                console.error("Failed to load products for customer portal:", err);
-            }
-        }
-
-        function renderCatalog() {
-            const grid = document.getElementById('catalogGrid');
-            grid.innerHTML = '';
-
-            document.getElementById('productCountBadge').innerText = `${products.length} Items`;
-
-            if (products.length === 0) {
-                grid.innerHTML = `
-                    <div class="col-span-full text-center py-12 text-gray-400">
-                        <i class="fa-solid fa-box-open text-4xl mb-3"></i>
-                        <p>No products available in the catalog right now.</p>
-                    </div>
-                `;
-                return;
-            }
-
-            products.forEach(p => {
-                const inStock = p.stock > 0;
-
-                grid.innerHTML += `
-                    <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col justify-between">
-                        <div>
-                            <div class="relative h-48 bg-gray-100">
-                                <img src="${p.image_url}" class="w-full h-full object-cover">
-                                <span class="absolute top-3 right-3 text-[11px] font-bold px-2.5 py-1 rounded-full ${inStock ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
-                                    ${inStock ? `${p.stock} In Stock` : 'Out of Stock'}
-                                </span>
-                            </div>
-                            <div class="p-5">
-                                <div class="text-xs text-blue-600 font-semibold mb-1">${p.functional || 'Seating'} • ${p.room || 'Living Room'}</div>
-                                <h3 class="font-bold text-gray-900 text-base mb-2">${p.name}</h3>
-                                <div class="text-lg font-extrabold text-gray-900 mb-4">₹ ${p.price.toLocaleString('en-IN')}</div>
-                            </div>
-                        </div>
-                        <div class="px-5 pb-5 pt-0">
-                            <button 
-                                onclick="openOrderModal(${p.id})" 
-                                ${!inStock ? 'disabled' : ''} 
-                                class="w-full py-2.5 rounded-lg text-sm font-medium transition ${inStock ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}">
-                                ${inStock ? 'Buy Now' : 'Sold Out'}
-                            </button>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        function togglePaymentView(method) {
-            const upiContainer = document.getElementById('upiInputContainer');
-            const qrContainer = document.getElementById('qrContainer');
-            const price = document.getElementById('orderProductPrice').value || '100';
-
-            if (method === 'qr') {
-                upiContainer.classList.add('hidden');
-                qrContainer.classList.remove('hidden');
-                
-                // Generates dynamic UPI QR Code
-                const upiString = `upi://pay?pa=merchant@paytm&pn=LuxeFurniture&am=${price}&cu=INR`;
-                document.getElementById('qrCodeImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiString)}`;
-            } else {
-                qrContainer.classList.add('hidden');
-                upiContainer.classList.remove('hidden');
-            }
-        }
-
-        function openOrderModal(productId) {
-            const p = products.find(prod => prod.id === productId);
-            if (!p || p.stock <= 0) return;
-
-            document.getElementById('orderProductId').value = p.id;
-            document.getElementById('orderProductName').value = p.name;
-            document.getElementById('orderProductPrice').value = p.price;
-
-            document.getElementById('summaryProductName').innerText = p.name;
-            document.getElementById('summaryProductPrice').innerText = `₹ ${p.price.toLocaleString('en-IN')}`;
-
-            togglePaymentView('gpay');
-            document.getElementById('orderModal').classList.remove('hidden');
-        }
-
-        function closeOrderModal() {
-            document.getElementById('orderModal').classList.add('hidden');
-        }
-
-        async function handleOrderSubmit(e) {
-            e.preventDefault();
-
-            const payload = {
-                channel: document.getElementById('channelInput').value,
-                customer: document.getElementById('customerNameInput').value,
-                productId: document.getElementById('orderProductId').value,
-                productName: document.getElementById('orderProductName').value,
-                amount: parseFloat(document.getElementById('orderProductPrice').value),
-                quantity: 1
-            };
-
-            try {
-                await fetch(`${API_BASE}/api/orders`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                closeOrderModal();
-                alert("Payment verified & Order placed successfully!");
-                fetchProducts();
-            } catch (err) {
-                console.error("Failed to place order:", err);
-            }
-        }
-
-        function setupWebSocket() {
-            const ws = new WebSocket(WS_URL);
-
-            ws.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-                if (data.event === 'live_scan' || data.event === 'inventory_updated' || data.event === 'order_created') {
-                    fetchProducts();
-                }
-            };
-
-            ws.onclose = () => setTimeout(setupWebSocket, 3000);
-        }
-
-        fetchProducts();
-        setupWebSocket();
-    </script>
+    <!-- Scripts -->
+    <script src="main.js"></script>
 </body>
 </html>
