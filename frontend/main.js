@@ -40,7 +40,28 @@ function renderProducts(products) {
         const card = document.createElement("div");
         card.className = "bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition";
         
-        const imageSrc = product.image_url ? product.image_url : "chair.jpg";
+        const nameLower = product.name.toLowerCase().trim();
+        let selectedImage = "chair.jpg"; // Default fallback
+
+        // Dynamic image matching based on your local folder files
+        if (nameLower.includes("computer") || nameLower.includes("study") || nameLower.includes("desk")) {
+            selectedImage = "Computer-table.jpg";
+        } else if (nameLower.includes("dining")) {
+            selectedImage = "dining-Table.jpg";
+        } else if (nameLower.includes("table")) {
+            selectedImage = "Computer-table.jpg";
+        } else if (nameLower.includes("bed")) {
+            selectedImage = "Bed.jpg";
+        } else if (nameLower.includes("sofa") || nameLower.includes("couch")) {
+            selectedImage = "sofa.jpg";
+        } else if (nameLower.includes("chair")) {
+            selectedImage = "chair.jpg";
+        }
+
+        // Use custom HTTP image URL if specified, otherwise use local file match
+        const imageSrc = (product.image_url && product.image_url.startsWith("http")) 
+            ? product.image_url 
+            : selectedImage;
 
         card.innerHTML = `
             <div class="relative h-48 bg-gray-100 flex items-center justify-center overflow-hidden">
@@ -50,7 +71,7 @@ function renderProducts(products) {
                 </span>
             </div>
             <div class="p-4">
-                <span class="text-xs font-medium text-blue-600 uppercase tracking-wider">${product.category || 'Furniture'}</span>
+                <span class="text-xs font-medium text-blue-600 uppercase tracking-wider">${product.functional || product.category || 'Furniture'}</span>
                 <h3 class="font-bold text-gray-900 text-lg mt-1">${product.name}</h3>
                 <div class="mt-4 flex items-center justify-between">
                     <span class="text-xl font-extrabold text-gray-900">₹ ${product.price}</span>
@@ -76,7 +97,7 @@ function injectCheckoutModal() {
                 <button type="button" onclick="closeCheckout()" class="text-gray-400 hover:text-gray-600 text-xl font-bold">&times;</button>
             </div>
             
-            <!-- Form Body with Scroll -->
+            <!-- Scrollable Form Body -->
             <form id="checkout-form" onsubmit="handlePurchaseSubmit(event)" class="py-2 overflow-y-auto space-y-2.5 flex-1">
                 <div class="bg-gray-50 p-2.5 rounded-lg border border-gray-200">
                     <div class="flex justify-between text-xs"><span class="text-gray-500">Item:</span><span id="modal-item-name" class="font-semibold text-gray-900"></span></div>
@@ -116,10 +137,10 @@ function injectCheckoutModal() {
 
                 <div>
                     <label class="block text-[11px] font-semibold text-gray-700 mb-0.5">UPI ID / Mobile Number</label>
-                    <input type="text" id="cust-upi" placeholder="username@upi or mobile number" class="w-full text-xs p-2 border border-gray-300 rounded-lg">
+                    <input type="text" id="cust-upi" placeholder="username@upi or 10-digit number" class="w-full text-xs p-2 border border-gray-300 rounded-lg">
                 </div>
 
-                <!-- Guaranteed Visible Buttons -->
+                <!-- Always Visible Action Buttons -->
                 <div class="flex gap-2 pt-2 border-t border-gray-100 shrink-0 mt-2">
                     <button type="button" onclick="closeCheckout()" class="w-1/2 py-2 text-xs font-bold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300">Cancel</button>
                     <button type="submit" id="submit-order-btn" class="w-1/2 py-2 text-xs font-bold text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 shadow">Place Order & Pay</button>
@@ -159,7 +180,6 @@ async function handlePurchaseSubmit(event) {
     const name = document.getElementById("cust-name").value;
     const paymentMethod = document.querySelector('input[name="payment_method"]:checked')?.value || "GPay";
 
-    // Dynamic payload matching OrderCreate in main.py exactly
     const orderPayload = {
         channel: "Web Store",
         customer: name,
