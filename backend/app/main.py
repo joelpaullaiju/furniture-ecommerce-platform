@@ -98,7 +98,7 @@ class ProductCreate(BaseModel):
     image_url: Optional[str] = "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400"
 
 class OrderCreate(BaseModel):
-    channel: str
+    channel: Optional[str] = "Web Store"
     customer: str
     productId: str
     productName: str
@@ -217,12 +217,12 @@ async def create_order(payload: OrderCreate):
     query_db("""
         INSERT INTO orders (id, channel, customer, productId, productName, amount, status)
         VALUES (?, ?, ?, ?, ?, ?, ?)
-    """, (order_id, payload.channel, payload.customer, payload.productId, payload.productName, payload.amount, "Pending Dispatch"), commit=True)
+    """, (order_id, payload.channel or "Web Store", payload.customer, payload.productId, payload.productName, payload.amount, "Pending Dispatch"), commit=True)
 
     await manager.broadcast({"event": "order_created"})
+    await manager.broadcast({"event": "inventory_updated"})
     return {"id": order_id, "status": "created"}
 
-# Manual Order Dispatch Endpoint
 @app.put("/api/orders/{order_id}/dispatch")
 async def manual_dispatch_order(order_id: str):
     query_db("UPDATE orders SET status = 'Dispatched' WHERE id = ?", (order_id,), commit=True)
