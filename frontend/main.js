@@ -54,7 +54,7 @@ function renderProducts(products) {
                 <h3 class="font-bold text-gray-900 text-lg mt-1">${product.name}</h3>
                 <div class="mt-4 flex items-center justify-between">
                     <span class="text-xl font-extrabold text-gray-900">₹ ${product.price}</span>
-                    <button onclick="openCheckout(${product.id}, '${product.name}', ${product.price}, ${product.stock})" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition shadow-sm">
+                    <button onclick="openCheckout('${product.id}', '${product.name}', ${product.price}, ${product.stock})" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition shadow-sm">
                         Buy Now
                     </button>
                 </div>
@@ -68,19 +68,19 @@ function injectCheckoutModal() {
     if (document.getElementById("checkout-modal")) return;
 
     const modalHTML = `
-    <div id="checkout-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center hidden z-50 p-4">
-        <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-gray-100 max-h-[85vh] flex flex-col">
+    <div id="checkout-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center hidden z-50 p-3">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-4 shadow-2xl border border-gray-100 flex flex-col max-h-[85vh]">
             <!-- Header -->
-            <div class="flex justify-between items-center pb-3 border-b border-gray-100">
+            <div class="flex justify-between items-center pb-2 border-b border-gray-100 shrink-0">
                 <h3 class="font-bold text-base text-gray-900">Checkout & Payment</h3>
                 <button type="button" onclick="closeCheckout()" class="text-gray-400 hover:text-gray-600 text-xl font-bold">&times;</button>
             </div>
             
-            <!-- Scrollable Body so buttons are ALWAYS visible -->
-            <form id="checkout-form" onsubmit="handlePurchaseSubmit(event)" class="py-3 flex-grow overflow-y-auto space-y-3">
+            <!-- Form Body with Scroll -->
+            <form id="checkout-form" onsubmit="handlePurchaseSubmit(event)" class="py-2 overflow-y-auto space-y-2.5 flex-1">
                 <div class="bg-gray-50 p-2.5 rounded-lg border border-gray-200">
                     <div class="flex justify-between text-xs"><span class="text-gray-500">Item:</span><span id="modal-item-name" class="font-semibold text-gray-900"></span></div>
-                    <div class="flex justify-between text-xs mt-1"><span class="text-gray-500">Amount Due:</span><span id="modal-item-price" class="font-bold text-emerald-600"></span></div>
+                    <div class="flex justify-between text-xs mt-0.5"><span class="text-gray-500">Amount Due:</span><span id="modal-item-price" class="font-bold text-emerald-600"></span></div>
                 </div>
 
                 <div>
@@ -115,16 +115,16 @@ function injectCheckoutModal() {
                 </div>
 
                 <div>
-                    <label class="block text-[11px] font-semibold text-gray-700 mb-0.5">UPI ID / Phone Number</label>
+                    <label class="block text-[11px] font-semibold text-gray-700 mb-0.5">UPI ID / Mobile Number</label>
                     <input type="text" id="cust-upi" placeholder="username@upi or mobile number" class="w-full text-xs p-2 border border-gray-300 rounded-lg">
                 </div>
-            </form>
 
-            <!-- Fixed Footer with Guaranteed Submit & Cancel Buttons -->
-            <div class="flex gap-2 pt-3 border-t border-gray-100 mt-auto">
-                <button type="button" onclick="closeCheckout()" class="w-1/2 py-2 text-xs font-bold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300">Cancel</button>
-                <button type="submit" form="checkout-form" id="submit-order-btn" class="w-1/2 py-2 text-xs font-bold text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 shadow">Place Order & Pay</button>
-            </div>
+                <!-- Guaranteed Visible Buttons -->
+                <div class="flex gap-2 pt-2 border-t border-gray-100 shrink-0 mt-2">
+                    <button type="button" onclick="closeCheckout()" class="w-1/2 py-2 text-xs font-bold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300">Cancel</button>
+                    <button type="submit" id="submit-order-btn" class="w-1/2 py-2 text-xs font-bold text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 shadow">Place Order & Pay</button>
+                </div>
+            </form>
         </div>
     </div>`;
     document.body.insertAdjacentHTML('beforeend', modalHTML);
@@ -135,7 +135,7 @@ function openCheckout(id, name, price, stock) {
         alert("This item is currently out of stock!");
         return;
     }
-    currentProduct = { id, name, price };
+    currentProduct = { id: id.toString(), name: name, price: parseFloat(price) };
     document.getElementById("modal-item-name").textContent = name;
     document.getElementById("modal-item-price").textContent = `₹ ${price}`;
     document.getElementById("checkout-modal").classList.remove("hidden");
@@ -156,42 +156,42 @@ async function handlePurchaseSubmit(event) {
     btn.disabled = true;
     btn.textContent = "Processing...";
 
-    // Strategy: Try endpoints in order until one returns 200 OK
-    const endpoints = [
-        { url: `${API_URL}/api/products/${currentProduct.id}/buy`, method: "POST", body: { quantity: 1 } },
-        { url: `${API_URL}/api/products/${currentProduct.id}/purchase`, method: "POST", body: { quantity: 1 } },
-        { url: `${API_URL}/api/orders`, method: "POST", body: { product_id: currentProduct.id, quantity: 1 } },
-        { url: `${API_URL}/api/purchase`, method: "POST", body: { product_id: currentProduct.id, quantity: 1 } }
-    ];
+    const name = document.getElementById("cust-name").value;
+    const paymentMethod = document.querySelector('input[name="payment_method"]:checked')?.value || "GPay";
 
-    let success = false;
+    // Dynamic payload matching OrderCreate in main.py exactly
+    const orderPayload = {
+        channel: "Web Store",
+        customer: name,
+        productId: String(currentProduct.id),
+        productName: String(currentProduct.name),
+        amount: parseFloat(currentProduct.price),
+        quantity: 1
+    };
 
-    for (const ep of endpoints) {
-        try {
-            const res = await fetch(ep.url, {
-                method: ep.method,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(ep.body)
-            });
-            if (res.ok) {
-                success = true;
-                break;
-            }
-        } catch (err) {
-            console.warn(`Failed calling ${ep.url}:`, err);
+    try {
+        const response = await fetch(`${API_URL}/api/orders`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(orderPayload)
+        });
+
+        if (response.ok) {
+            alert(`Order Placed Successfully!\nThank you, ${name}. Payment processed via ${paymentMethod}.`);
+            closeCheckout();
+            fetchProducts();
+        } else {
+            const errData = await response.json().catch(() => ({}));
+            console.error("FastAPI Error Details:", errData);
+            alert(`Checkout failed (${response.status}). Check terminal console.`);
         }
+    } catch (err) {
+        console.error("Checkout network error:", err);
+        alert("Unable to reach backend server.");
+    } finally {
+        btn.disabled = false;
+        btn.textContent = "Place Order & Pay";
     }
-
-    if (success) {
-        alert("Order Placed Successfully!");
-        closeCheckout();
-        fetchProducts();
-    } else {
-        alert("Checkout failed. Check server terminal for FastAPI routes.");
-    }
-
-    btn.disabled = false;
-    btn.textContent = "Place Order & Pay";
 }
 
 function connectWebSocket() {
